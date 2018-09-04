@@ -32,6 +32,9 @@ public class MorphingAnimation {
         private int fromStrokeColor;
         private int toStrokeColor;
 
+        private Integer fromTextColor;
+        private Integer toTextColor;
+
         private MorphingButton button;
         private MorphingAnimation.Listener animationListener;
 
@@ -53,7 +56,7 @@ public class MorphingAnimation {
             return this;
         }
 
-        public Params color(int fromColor, int toColor) {
+        public Params solidColor(int fromColor, int toColor) {
             this.fromColor = fromColor;
             this.toColor = toColor;
             return this;
@@ -89,6 +92,11 @@ public class MorphingAnimation {
             return this;
         }
 
+        public Params textColor(Integer fromTextColor, Integer toTextColor) {
+            this.fromTextColor = fromTextColor;
+            this.toTextColor = toTextColor;
+            return this;
+        }
     }
 
     private Params mParams;
@@ -112,6 +120,12 @@ public class MorphingAnimation {
         ObjectAnimator bgColorAnimation = ObjectAnimator.ofInt(background, "color", mParams.fromColor, mParams.toColor);
         bgColorAnimation.setEvaluator(new ArgbEvaluator());
 
+        ObjectAnimator textColorAnimation = null;
+        if (mParams.toTextColor != null) {
+            textColorAnimation = ObjectAnimator.ofInt(mParams.button, "textColor", mParams.toTextColor);
+            bgColorAnimation.setEvaluator(new ArgbEvaluator());
+        }
+
         ValueAnimator heightAnimation = ValueAnimator.ofInt(mParams.fromHeight, mParams.toHeight);
         heightAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -134,10 +148,14 @@ public class MorphingAnimation {
             }
         });
 
+
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.setDuration(mParams.duration);
         animatorSet.playTogether(strokeWidthAnimation, strokeColorAnimation, cornerAnimation, bgColorAnimation,
                 heightAnimation, widthAnimation);
+        if (textColorAnimation != null) {
+            animatorSet.playTogether(textColorAnimation);
+        }
         animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

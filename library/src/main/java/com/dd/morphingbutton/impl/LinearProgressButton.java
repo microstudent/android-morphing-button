@@ -77,7 +77,7 @@ public class LinearProgressButton extends MorphingButton implements IProgress {
                 .cornerRadius(mProgressCornerRadius)
                 .width(width)
                 .height(height)
-                .color(color)
+                .solidColor(color)
                 .colorPressed(color);
         morph(longRoundedSquare);
     }

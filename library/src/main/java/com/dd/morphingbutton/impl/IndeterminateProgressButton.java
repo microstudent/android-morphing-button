@@ -102,7 +102,7 @@ public class IndeterminateProgressButton extends MorphingButton {
                 .cornerRadius(mProgressCornerRadius)
                 .width(width)
                 .height(height)
-                .color(backgroundColor)
+                .solidColor(backgroundColor)
                 .colorPressed(backgroundColor)
                 .animationListener(new MorphingAnimation.Listener() {
                     @Override

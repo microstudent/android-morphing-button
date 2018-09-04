@@ -6,25 +6,27 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
 import android.util.StateSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-public class MorphingButton extends Button {
+public class MorphingButton extends AppCompatButton {
 
     private Padding mPadding;
     private int mHeight;
     private int mWidth;
-    private int mColor;
+    private int mSolidColor;
     private int mCornerRadius;
     private int mStrokeWidth;
     private int mStrokeColor;
+    private Integer mTextColor;
 
     protected boolean mAnimationInProgress;
 
@@ -73,10 +75,11 @@ public class MorphingButton extends Button {
                 morphWithAnimation(params);
             }
 
-            mColor = params.color;
+            mSolidColor = params.solidColor;
             mCornerRadius = params.cornerRadius;
             mStrokeWidth = params.strokeWidth;
             mStrokeColor = params.strokeColor;
+            mTextColor = params.textColor;
         }
     }
 
@@ -87,7 +90,8 @@ public class MorphingButton extends Button {
         setPadding(mPadding.left, mPadding.top, mPadding.right, mPadding.bottom);
 
         MorphingAnimation.Params animationParams = MorphingAnimation.Params.create(this)
-                .color(mColor, params.color)
+                .textColor(mTextColor, params.textColor)
+                .solidColor(mSolidColor, params.solidColor)
                 .cornerRadius(mCornerRadius, params.cornerRadius)
                 .strokeWidth(mStrokeWidth, params.strokeWidth)
                 .strokeColor(mStrokeColor, params.strokeColor)
@@ -106,7 +110,7 @@ public class MorphingButton extends Button {
     }
 
     private void morphWithoutAnimation(@NonNull Params params) {
-        mDrawableNormal.setColor(params.color);
+        mDrawableNormal.setColor(params.solidColor);
         mDrawableNormal.setCornerRadius(params.cornerRadius);
         mDrawableNormal.setStrokeColor(params.strokeColor);
         mDrawableNormal.setStrokeWidth(params.strokeWidth);
@@ -116,6 +120,9 @@ public class MorphingButton extends Button {
             layoutParams.width = params.width;
             layoutParams.height = params.height;
             setLayoutParams(layoutParams);
+        }
+        if (params.textColor != null) {
+            setTextColor(params.textColor);
         }
 
         finalizeMorphing(params);
@@ -172,9 +179,10 @@ public class MorphingButton extends Button {
         mDrawableNormal = createDrawable(blue, cornerRadius, 0);
         mDrawablePressed = createDrawable(blueDark, cornerRadius, 0);
 
-        mColor = blue;
+        mSolidColor = blue;
         mStrokeColor = blue;
         mCornerRadius = cornerRadius;
+        mTextColor = getCurrentTextColor();
 
         background.addState(new int[]{android.R.attr.state_pressed}, mDrawablePressed.getGradientDrawable());
         background.addState(StateSet.WILD_CARD, mDrawableNormal.getGradientDrawable());
@@ -230,7 +238,8 @@ public class MorphingButton extends Button {
         private int cornerRadius;
         private int width;
         private int height;
-        private int color;
+        private Integer textColor;
+        private int solidColor;
         private int colorPressed;
         private int duration;
         private int icon;
@@ -272,8 +281,13 @@ public class MorphingButton extends Button {
             return this;
         }
 
-        public Params color(int color) {
-            this.color = color;
+        public Params solidColor(int color) {
+            this.solidColor = color;
+            return this;
+        }
+
+        public Params textColor(@ColorInt int color) {
+            this.textColor = color;
             return this;
         }
 

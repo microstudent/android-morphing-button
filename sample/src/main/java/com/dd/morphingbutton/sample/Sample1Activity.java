@@ -2,6 +2,7 @@ package com.dd.morphingbutton.sample;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -37,6 +38,33 @@ public class Sample1Activity extends BaseActivity {
             }
         });
 
+        final MorphingButton button = (MorphingButton) findViewById(R.id.btnMorph3);
+        MorphingButton.Params params = MorphingButton.Params
+                .create()
+                .solidColor(Color.parseColor("#198DED"))
+                .width(dimen(R.dimen.v7_btn_install_width))
+                .height(dimen(R.dimen.v7_btn_install_height))
+                .cornerRadius(dimen(R.dimen.v7_btn_install_corner_radius))
+                .text("安装");
+        button.morph(params);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MorphingButton.Params params = MorphingButton.Params
+                        .create()
+                        .strokeColor(Color.parseColor("#198DED"))
+                        .strokeWidth(dimen(R.dimen.cir_progress_button_stroke_width))
+                        .width(dimen(R.dimen.v7_btn_install_width))
+                        .textColor(Color.parseColor("#198DED"))
+                        .height(dimen(R.dimen.v7_btn_install_height))
+                        .cornerRadius(dimen(R.dimen.v7_btn_install_corner_radius))
+                        .duration(500)
+                        .text("打开");
+                button.morph(params);
+            }
+        });
+
         morphToSquare(btnMorph1, 0);
         morphToFailure(btnMorph2, 0);
     }
@@ -67,7 +95,7 @@ public class Sample1Activity extends BaseActivity {
                 .cornerRadius(dimen(R.dimen.mb_corner_radius_2))
                 .width(dimen(R.dimen.mb_width_200))
                 .height(dimen(R.dimen.mb_height_56))
-                .color(color(R.color.mb_blue))
+                .solidColor(color(R.color.mb_blue))
                 .colorPressed(color(R.color.mb_blue_dark))
                 .text(getString(R.string.mb_button));
         btnMorph.morph(square);
@@ -79,7 +107,7 @@ public class Sample1Activity extends BaseActivity {
                 .cornerRadius(dimen(R.dimen.mb_height_56))
                 .width(dimen(R.dimen.mb_height_56))
                 .height(dimen(R.dimen.mb_height_56))
-                .color(color(R.color.mb_green))
+                .solidColor(color(R.color.mb_green))
                 .colorPressed(color(R.color.mb_green_dark))
                 .icon(R.drawable.ic_done);
         btnMorph.morph(circle);
@@ -91,7 +119,7 @@ public class Sample1Activity extends BaseActivity {
                 .cornerRadius(dimen(R.dimen.mb_height_56))
                 .width(dimen(R.dimen.mb_height_56))
                 .height(dimen(R.dimen.mb_height_56))
-                .color(color(R.color.mb_red))
+                .solidColor(color(R.color.mb_red))
                 .colorPressed(color(R.color.mb_red_dark))
                 .icon(R.drawable.ic_lock);
         btnMorph.morph(circle);
