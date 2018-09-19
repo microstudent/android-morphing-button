@@ -2,12 +2,11 @@ package com.dd.morphingbutton.sample;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import com.dd.morphingbutton.MorphingButton;
-import com.dd.morphingbutton.impl.ProgressTextButton;
+import com.dd.morphingbutton.impl.CircularProgressButton;
 
 public class Sample1Activity extends BaseActivity {
 
@@ -39,13 +38,24 @@ public class Sample1Activity extends BaseActivity {
             }
         });
 
-        final ProgressTextButton button = (ProgressTextButton) findViewById(R.id.btnMorph3);
+        final CircularProgressButton button = (CircularProgressButton) findViewById(R.id.btnMorph3);
 
-        button.setState(ProgressTextButton.StateEnum.IDLE);
+        button.setState(CircularProgressButton.StateEnum.IDLE, false);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                button.setState(ProgressTextButton.StateEnum.TEXT);
+                switch (button.getCurrentStateEnum()) {
+                    case IDLE:
+                        button.setState(CircularProgressButton.StateEnum.PROGRESS, true);
+                        break;
+                    case PROGRESS:
+                        button.setState(CircularProgressButton.StateEnum.TEXT, true);
+                        break;
+                    case TEXT:
+                        button.setState(CircularProgressButton.StateEnum.IDLE, true);
+                    default:
+                        break;
+                }
             }
         });
 

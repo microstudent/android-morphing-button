@@ -1,5 +1,7 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
+import android.support.annotation.NonNull;
+
 import com.dd.morphingbutton.MorphingButton;
 
 public interface ProgressTextState {
@@ -8,5 +10,6 @@ public interface ProgressTextState {
 
     void stop();
 
+    @NonNull
     MorphingButton.Params getParams();
 }

@@ -3,11 +3,11 @@ package com.dd.morphingbutton.impl.progresstextstate;
 import android.util.AttributeSet;
 
 import com.dd.morphingbutton.MorphingButton;
-import com.dd.morphingbutton.impl.ProgressTextButton;
+import com.dd.morphingbutton.impl.CircularProgressButton;
 
 public class ErrorState implements ProgressTextState {
 
-    public ErrorState(ProgressTextButton button, AttributeSet attrs) {
+    public ErrorState(CircularProgressButton button) {
 
     }
 

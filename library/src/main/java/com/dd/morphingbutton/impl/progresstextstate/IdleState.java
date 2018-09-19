@@ -8,23 +8,22 @@ import android.util.AttributeSet;
 
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.R;
-import com.dd.morphingbutton.impl.ProgressTextButton;
-import com.dd.morphingbutton.utils.DensityUtil;
+import com.dd.morphingbutton.impl.CircularProgressButton;
 
 import hugo.weaving.DebugLog;
 
 public class IdleState implements ProgressTextState {
 
-    private final ProgressTextButton mButton;
+    private final CircularProgressButton mButton;
     private int mStrokeWidth;
     private String mIdleText;
     private float mCornerRadius;
     private ColorStateList mIdleColorState;
     private ColorStateList mStrokeColorIdle;
 
-    public IdleState(ProgressTextButton button, AttributeSet attributeSet) {
+    public IdleState(CircularProgressButton button) {
         mButton = button;
-        initAttrs(button.getContext(), attributeSet);
+        initAttrs(button.getContext());
     }
 
 
@@ -33,8 +32,8 @@ public class IdleState implements ProgressTextState {
     }
 
     @DebugLog
-    private void initAttrs(Context context, AttributeSet attributeSet) {
-        TypedArray attr = getTypedArray(context, attributeSet, R.styleable.CircularProgressButton);
+    private void initAttrs(Context context) {
+        TypedArray attr = mButton.getTypedArray();
         if (attr == null) {
             return;
         }
@@ -51,6 +50,7 @@ public class IdleState implements ProgressTextState {
         mIdleColorState = context.getResources().getColorStateList(idleStateSelector);
         int idleStrokeColorSelector = attr.getResourceId(R.styleable.CircularProgressButton_mcCirButtonStrokeColorIdle, idleStateSelector);
         mStrokeColorIdle = context.getResources().getColorStateList(idleStrokeColorSelector);
+        attr.recycle();
     }
 
     @Override
@@ -67,7 +67,9 @@ public class IdleState implements ProgressTextState {
     public MorphingButton.Params getParams() {
         return MorphingButton.Params
                 .create()
+                .textColor(Color.WHITE)
                 .solidColor(mIdleColorState.getDefaultColor())
+                .colorPressed(mIdleColorState.getColorForState(new int[]{android.R.attr.state_pressed}, mIdleColorState.getDefaultColor()))
                 .strokeWidth(mStrokeWidth)
                 .width(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_width))
                 .height(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_height))

@@ -5,10 +5,16 @@
     <color name="mb_blue_dark">#ff00719b</color>
     <dimen name="mb_corner_radius_2">2dp</dimen>
     <dimen name="mc_cir_progress_button_stroke_width">3dp</dimen>
-    <color name="mc_cir_progress_button_blue">#198DED</color>
 
     <!--下载按钮公共长宽-->
     <dimen name="v7_btn_install_height">24dip</dimen>
     <dimen name="v7_btn_install_width">58dip</dimen>
     <dimen name="v7_btn_install_corner_radius">48dp</dimen>
+
+    <color name="mc_cir_progress_button_blank">#0C000000</color>
+    <color name="mc_cir_progress_button_blue">#198DED</color>
+    <color name="mc_cir_progress_button_green">#37B44F</color>
+    <color name="mc_cir_progress_button_grey">#ffdedede</color>
+    <color name="mc_cir_progress_button_red">#ffff4444</color>
+    <color name="mc_cir_progress_button_white">#fffafafa</color>
 </resources>

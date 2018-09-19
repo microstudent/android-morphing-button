@@ -4,12 +4,11 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 
 import com.dd.morphingbutton.MorphingButton;
-import com.dd.morphingbutton.R;
-import com.dd.morphingbutton.impl.ProgressTextButton;
+import com.dd.morphingbutton.impl.CircularProgressButton;
 
 public class TextState implements ProgressTextState {
 
-    public TextState(ProgressTextButton button, AttributeSet attrs) {
+    public TextState(CircularProgressButton button) {
 
     }
 
