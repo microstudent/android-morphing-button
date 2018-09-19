@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.impl.ProgressTextButton;
 
 public class Sample1Activity extends BaseActivity {
 
@@ -38,30 +39,13 @@ public class Sample1Activity extends BaseActivity {
             }
         });
 
-        final MorphingButton button = (MorphingButton) findViewById(R.id.btnMorph3);
-        MorphingButton.Params params = MorphingButton.Params
-                .create()
-                .solidColor(Color.parseColor("#198DED"))
-                .width(dimen(R.dimen.v7_btn_install_width))
-                .height(dimen(R.dimen.v7_btn_install_height))
-                .cornerRadius(dimen(R.dimen.v7_btn_install_corner_radius))
-                .text("安装");
-        button.morph(params);
+        final ProgressTextButton button = (ProgressTextButton) findViewById(R.id.btnMorph3);
 
+        button.setState(ProgressTextButton.StateEnum.IDLE);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MorphingButton.Params params = MorphingButton.Params
-                        .create()
-                        .strokeColor(Color.parseColor("#198DED"))
-                        .strokeWidth(dimen(R.dimen.cir_progress_button_stroke_width))
-                        .width(dimen(R.dimen.v7_btn_install_width))
-                        .textColor(Color.parseColor("#198DED"))
-                        .height(dimen(R.dimen.v7_btn_install_height))
-                        .cornerRadius(dimen(R.dimen.v7_btn_install_corner_radius))
-                        .duration(500)
-                        .text("打开");
-                button.morph(params);
+                button.setState(ProgressTextButton.StateEnum.TEXT);
             }
         });
 

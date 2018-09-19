@@ -127,26 +127,30 @@ public class MorphingAnimation {
         }
 
         ValueAnimator heightAnimation = ValueAnimator.ofInt(mParams.fromHeight, mParams.toHeight);
-        heightAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int val = (Integer) valueAnimator.getAnimatedValue();
-                ViewGroup.LayoutParams layoutParams = mParams.button.getLayoutParams();
-                layoutParams.height = val;
-                mParams.button.setLayoutParams(layoutParams);
-            }
-        });
+        if (mParams.fromHeight != mParams.toHeight && mParams.toHeight > 0) {
+            heightAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    int val = (Integer) valueAnimator.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = mParams.button.getLayoutParams();
+                    layoutParams.height = val;
+                    mParams.button.setLayoutParams(layoutParams);
+                }
+            });
+        }
 
         ValueAnimator widthAnimation = ValueAnimator.ofInt(mParams.fromWidth, mParams.toWidth);
-        widthAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int val = (Integer) valueAnimator.getAnimatedValue();
-                ViewGroup.LayoutParams layoutParams = mParams.button.getLayoutParams();
-                layoutParams.width = val;
-                mParams.button.setLayoutParams(layoutParams);
-            }
-        });
+        if (mParams.fromWidth != mParams.toWidth && mParams.toWidth > 0) {
+            widthAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    int val = (Integer) valueAnimator.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = mParams.button.getLayoutParams();
+                    layoutParams.width = val;
+                    mParams.button.setLayoutParams(layoutParams);
+                }
+            });
+        }
 
 
         AnimatorSet animatorSet = new AnimatorSet();
