@@ -1,5 +1,7 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
+import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
 import com.dd.morphingbutton.MorphingButton;
@@ -21,8 +23,14 @@ public class ErrorState implements ProgressTextState {
 
     }
 
+    @NonNull
     @Override
     public MorphingButton.Params getParams() {
         return null;
+    }
+
+    @Override
+    public void onDraw(@NonNull Canvas canvas) {
+
     }
 }

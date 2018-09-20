@@ -3,15 +3,11 @@ package com.dd.morphingbutton.impl;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import android.util.AttributeSet;
 
 import com.dd.morphingbutton.IProgress;
-import com.dd.morphingbutton.MorphingAnimation;
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.progresstextstate.CompleteState;
@@ -26,6 +22,7 @@ import java.util.Map;
 public class CircularProgressButton extends MorphingButton implements IProgress {
 
     private AttributeSet mAttrs;
+
     private StateEnum mCurrentStateEnum;
 
     public enum StateEnum {
@@ -35,7 +32,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         COMPLETE,
         ERROR,
         TEXT;
-        private ProgressTextState createStateInstance(CircularProgressButton button, AttributeSet attributeSet) {
+        private ProgressTextState createStateInstance(CircularProgressButton button) {
             ProgressTextState state = null;
             switch (this) {
                 case IDLE:
@@ -64,17 +61,6 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
 
     private ProgressTextState mCurrentStateImpl;
 
-    public static final int MAX_PROGRESS = 100;
-    public static final int MIN_PROGRESS = 0;
-
-    private int mProgress;
-    private int mProgressColor;
-    private int mProgressCornerRadius;
-    private Paint mPaint;
-    private RectF mRectF;
-
-    private boolean isIndeterminateRunning = false;
-
     public CircularProgressButton(Context context) {
         super(context);
         init();
@@ -95,34 +81,20 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     private void init() {
     }
 
-    public void morphToProgress(int color, int progressColor, int progressCornerRadius, int width, int height, int duration) {
-        mProgressCornerRadius = progressCornerRadius;
-        mProgressColor = progressColor;
-
-        MorphingButton.Params longRoundedSquare = MorphingButton.Params.create()
-                .duration(duration)
-                .cornerRadius(mProgressCornerRadius)
-                .width(width)
-                .height(height)
-                .solidColor(color)
-                .colorPressed(color);
-        morph(longRoundedSquare);
-    }
-
     public void setState(final StateEnum stateEnum, boolean withAnim) {
         if (mCurrentStateImpl != null) {
             mCurrentStateImpl.stop();
         }
-        mCurrentStateImpl = initState(stateEnum);
+        mCurrentStateImpl = getState(stateEnum);
         morph(withAnim ? mCurrentStateImpl.getParams() : mCurrentStateImpl.getParams().duration(0));
         mCurrentStateImpl.start();
         mCurrentStateEnum = stateEnum;
     }
 
-    private ProgressTextState initState(StateEnum state) {
+    private ProgressTextState getState(StateEnum state) {
         ProgressTextState progressTextState;
         if (mStateMap.get(state) == null) {
-            progressTextState = state.createStateInstance(this, mAttrs);
+            progressTextState = state.createStateInstance(this);
             mStateMap.put(state, progressTextState);
         } else {
             progressTextState = mStateMap.get(state);
@@ -139,20 +111,6 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         return mCurrentStateEnum;
     }
 
-    public void morphToCompleted() {
-        MorphingButton.Params params = MorphingButton.Params
-                .create()
-                .strokeColor(Color.parseColor("#198DED"))
-                .textColor(Color.parseColor("#198DED"))
-                .duration(300)
-                .animationListener(new MorphingAnimation.Listener() {
-                    @Override
-                    public void onAnimationEnd() {
-                        isIndeterminateRunning = true;
-                    }
-                })
-                .text("打开");
-    }
 
     public TypedArray getTypedArray() {
         return getContext().obtainStyledAttributes(mAttrs, R.styleable.CircularProgressButton, 0, 0);
@@ -160,19 +118,21 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
 
     @Override
     public void morph(@NonNull Params params) {
-        isIndeterminateRunning = false;
         super.morph(params);
     }
 
     @Override
     public void setProgress(int progress) {
-        mProgress = progress;
-        invalidate();
+        if (mCurrentStateEnum == StateEnum.PROGRESS) {
+            ((ProgressState) getState(StateEnum.PROGRESS)).setProgress(progress);
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (mCurrentStateImpl != null) {
+            mCurrentStateImpl.onDraw(canvas);
+        }
     }
-
 }

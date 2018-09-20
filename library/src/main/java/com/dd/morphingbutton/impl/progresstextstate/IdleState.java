@@ -3,7 +3,9 @@ package com.dd.morphingbutton.impl.progresstextstate;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
 import com.dd.morphingbutton.MorphingButton;
@@ -63,6 +65,7 @@ public class IdleState implements ProgressTextState {
         //do nothing...
     }
 
+    @NonNull
     @Override
     public MorphingButton.Params getParams() {
         return MorphingButton.Params
@@ -76,5 +79,10 @@ public class IdleState implements ProgressTextState {
                 .cornerRadius(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_corner_radius))
                 .duration(300)
                 .text("安装");
+    }
+
+    @Override
+    public void onDraw(@NonNull Canvas canvas) {
+
     }
 }

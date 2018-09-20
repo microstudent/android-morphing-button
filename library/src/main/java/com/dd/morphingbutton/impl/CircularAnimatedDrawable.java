@@ -124,7 +124,6 @@ public class CircularAnimatedDrawable extends Drawable implements Animatable {
         if (this.mAllowLoading) {
             this.invalidateSelf();
         }
-
     }
 
     public void setAllowLoading(boolean allow) {

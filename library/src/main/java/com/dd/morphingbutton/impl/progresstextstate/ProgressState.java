@@ -1,9 +1,9 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
 import android.content.res.TypedArray;
-import android.graphics.Color;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
+import android.support.annotation.NonNull;
 
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.R;
@@ -13,8 +13,10 @@ import com.dd.morphingbutton.impl.CircularProgressButton;
 
 public class ProgressState implements ProgressTextState {
 
+    public static final int MAX_PROGRESS = 100;
+    public static final int MIN_PROGRESS = 0;
+
     private final CircularProgressButton mButton;
-    private CircularAnimatedDrawable mCircularAnimatedDrawable;
 
     private CircularProgressDrawable mCircularProgressDrawable;
     private Drawable mDefaultDrawable;
@@ -23,11 +25,15 @@ public class ProgressState implements ProgressTextState {
     private int mColorProgress;
     private int mColorIndicator;
     private int mColorIndicatorBackground;
+    private int mProgress;
+    private boolean mIndeterminateProgressMode = true;
+    private int mPaddingProgress;
+
+    private CircularAnimatedDrawable mAnimatedDrawable;
 
     public ProgressState(CircularProgressButton button) {
         mButton = button;
         initAttrs();
-        mCircularAnimatedDrawable = new CircularAnimatedDrawable(mColorIndicator, mProgressStrokeWidth);
     }
 
     protected int getColor(int id) {
@@ -59,29 +65,79 @@ public class ProgressState implements ProgressTextState {
                 attr.getColor(
                         R.styleable.CircularProgressButton_mcCirButtonColorIndicatorBackground,
                         blank);
+        mPaddingProgress = attr.getDimensionPixelSize(
+                R.styleable.CircularProgressButton_mcCirButtonPaddingProgress, 0);
         attr.recycle();
+    }
+
+
+    public void setProgress(int progress) {
+        mProgress = progress;
+        mButton.invalidate();
     }
 
     @Override
     public void start() {
         mDefaultDrawable = mButton.getBackground();
-        mButton.setBackgroundDrawable(mCircularAnimatedDrawable);
-        mCircularAnimatedDrawable.start();
+        if (mIndeterminateProgressMode) {
+            initAnimatedDrawable();
+        }
+        mButton.setBackgroundDrawable(mAnimatedDrawable);
+        mAnimatedDrawable.start();
+        mAnimatedDrawable.setAllowLoading(true);
     }
 
-    @Override
-    public void stop() {
-        mCircularAnimatedDrawable.stop();
-        if (mDefaultDrawable != null) {
-            mButton.setBackgroundDrawable(mDefaultDrawable);
+    private void initAnimatedDrawable() {
+        if (mAnimatedDrawable == null) {
+            mAnimatedDrawable = new CircularAnimatedDrawable(mColorIndicator, mProgressStrokeWidth);
         }
     }
 
     @Override
+    public void stop() {
+        if (mDefaultDrawable != null) {
+            mButton.setBackgroundDrawable(mDefaultDrawable);
+        }
+        if (mAnimatedDrawable != null) {
+            mAnimatedDrawable.stop();
+            mAnimatedDrawable.setAllowLoading(false);
+        }
+    }
+
+    @NonNull
+    @Override
     public MorphingButton.Params getParams() {
+        int offset = (mButton.getWidth() - mButton.getHeight()) / 2;
+        int left = offset + mPaddingProgress;
+        int right = mButton.getWidth() - offset - mPaddingProgress;
+        int bottom = mButton.getHeight() - mPaddingProgress;
+        int top = mPaddingProgress;
+
         return MorphingButton.Params.create()
-                .width(80)
-                .height(80)
+                .width(right - left)
+                .height(bottom - top)
                 .text("");
+    }
+
+    @Override
+    public void onDraw(@NonNull Canvas canvas) {
+//        if (mIndeterminateProgressMode) {
+//            drawIndeterminateProgress(canvas);
+//        } else {
+//            drawProgress(canvas);
+//        }
+    }
+
+    private void drawProgress(Canvas canvas) {
+
+    }
+
+    private void drawIndeterminateProgress(Canvas canvas) {
+        if (mAnimatedDrawable == null) {
+            initAnimatedDrawable();
+        } else {
+            mAnimatedDrawable.setAllowLoading(true);
+            mAnimatedDrawable.draw(canvas);
+        }
     }
 }
