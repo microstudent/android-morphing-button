@@ -2,7 +2,11 @@ package com.dd.morphingbutton;
 
 import android.animation.*;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MorphingAnimation {
 
@@ -21,8 +25,10 @@ public class MorphingAnimation {
         private int fromWidth;
         private int toWidth;
 
-        private int fromColor;
-        private int toColor;
+        @Nullable
+        private Integer fromColor;
+        @Nullable
+        private Integer toColor;
 
         private int duration;
 
@@ -32,7 +38,9 @@ public class MorphingAnimation {
         private int fromStrokeColor;
         private int toStrokeColor;
 
+        @Nullable
         private Integer fromTextColor;
+        @Nullable
         private Integer toTextColor;
 
         private MorphingButton button;
@@ -56,7 +64,7 @@ public class MorphingAnimation {
             return this;
         }
 
-        public Params solidColor(int fromColor, int toColor) {
+        public Params solidColor(Integer fromColor, Integer toColor) {
             this.fromColor = fromColor;
             this.toColor = toColor;
             return this;
@@ -106,6 +114,8 @@ public class MorphingAnimation {
     }
 
     public void start() {
+        List<Animator> animators = new ArrayList<>();
+
         StrokeGradientDrawable background = mParams.button.getDrawableNormal();
 
         ObjectAnimator cornerAnimation =
@@ -113,53 +123,50 @@ public class MorphingAnimation {
 
         ObjectAnimator strokeWidthAnimation =
                 ObjectAnimator.ofInt(background, "strokeWidth", mParams.fromStrokeWidth, mParams.toStrokeWidth);
+        animators.add(strokeWidthAnimation);
 
         ObjectAnimator strokeColorAnimation = ObjectAnimator.ofInt(background, "strokeColor", mParams.fromStrokeColor, mParams.toStrokeColor);
         strokeColorAnimation.setEvaluator(new ArgbEvaluator());
+        animators.add(strokeColorAnimation);
 
-        ObjectAnimator bgColorAnimation = ObjectAnimator.ofInt(background, "color", mParams.fromColor, mParams.toColor);
-        bgColorAnimation.setEvaluator(new ArgbEvaluator());
+        ObjectAnimator bgColorAnimation = null;
+        if (mParams.toColor != null) {
+            bgColorAnimation = ObjectAnimator.ofInt(background, "color", mParams.fromColor == null ? 0 : mParams.fromColor, mParams.toColor);
+            bgColorAnimation.setEvaluator(new ArgbEvaluator());
+            animators.add(bgColorAnimation);
+        }
 
         ObjectAnimator textColorAnimation = null;
         if (mParams.toTextColor != null) {
-            textColorAnimation = ObjectAnimator.ofInt(mParams.button, "textColor", mParams.toTextColor);
-            bgColorAnimation.setEvaluator(new ArgbEvaluator());
+            textColorAnimation = ObjectAnimator.ofInt(mParams.button, "textColor", mParams.fromTextColor == null ? 0 : mParams.fromTextColor, mParams.toTextColor);
+            textColorAnimation.setEvaluator(new ArgbEvaluator());
+            animators.add(textColorAnimation);
         }
 
-        ValueAnimator heightAnimation = ValueAnimator.ofInt(mParams.fromHeight, mParams.toHeight);
-        if (mParams.fromHeight != mParams.toHeight && mParams.toHeight > 0) {
-            heightAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+        if (mParams.fromHeight != mParams.toHeight && mParams.toHeight > 0 || mParams.fromWidth != mParams.toWidth && mParams.toWidth > 0) {
+            PropertyValuesHolder heightHolder = PropertyValuesHolder.ofInt("height", mParams.fromHeight, mParams.toHeight);
+            PropertyValuesHolder widthHolder = PropertyValuesHolder.ofInt("width", mParams.fromWidth, mParams.toWidth);
+
+            ValueAnimator sizeAnimator = ValueAnimator.ofPropertyValuesHolder(widthHolder, heightHolder);
+            sizeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    int val = (Integer) valueAnimator.getAnimatedValue();
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int width = (Integer) animation.getAnimatedValue("width");
+                    int height = (int) animation.getAnimatedValue("height");
                     ViewGroup.LayoutParams layoutParams = mParams.button.getLayoutParams();
-                    layoutParams.height = val;
+                    layoutParams.width = width;
+                    layoutParams.height = height;
                     mParams.button.setLayoutParams(layoutParams);
                 }
             });
+            animators.add(sizeAnimator);
         }
-
-        ValueAnimator widthAnimation = ValueAnimator.ofInt(mParams.fromWidth, mParams.toWidth);
-        if (mParams.fromWidth != mParams.toWidth && mParams.toWidth > 0) {
-            widthAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    int val = (Integer) valueAnimator.getAnimatedValue();
-                    ViewGroup.LayoutParams layoutParams = mParams.button.getLayoutParams();
-                    layoutParams.width = val;
-                    mParams.button.setLayoutParams(layoutParams);
-                }
-            });
-        }
-
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.setDuration(mParams.duration);
-        animatorSet.playTogether(strokeWidthAnimation, strokeColorAnimation, cornerAnimation, bgColorAnimation,
-                heightAnimation, widthAnimation);
-        if (textColorAnimation != null) {
-            animatorSet.playTogether(textColorAnimation);
-        }
+
+        animatorSet.playTogether(animators);
         animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

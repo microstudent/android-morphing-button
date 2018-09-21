@@ -22,10 +22,12 @@ public class MorphingButton extends AppCompatButton {
     private Padding mPadding;
     private int mHeight;
     private int mWidth;
-    private int mSolidColor;
+    @Nullable
+    private Integer mSolidColor;
     private int mCornerRadius;
     private int mStrokeWidth;
     private int mStrokeColor;
+    @Nullable
     private Integer mTextColor;
 
     protected boolean mAnimationInProgress;
@@ -239,7 +241,7 @@ public class MorphingButton extends AppCompatButton {
         private int width;
         private int height;
         private Integer textColor;
-        private int solidColor;
+        private Integer solidColor;
         private int colorPressed;
         private int duration;
         private int icon;

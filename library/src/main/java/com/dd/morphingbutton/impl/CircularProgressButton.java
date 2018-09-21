@@ -86,7 +86,8 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
             mCurrentStateImpl.stop();
         }
         mCurrentStateImpl = getState(stateEnum);
-        morph(withAnim ? mCurrentStateImpl.getParams() : mCurrentStateImpl.getParams().duration(0));
+        Params params = mCurrentStateImpl.getParams();
+        morph(withAnim ? params.duration(300) : params.duration(0));
         mCurrentStateImpl.start();
         mCurrentStateEnum = stateEnum;
     }

@@ -18,7 +18,6 @@ public class ProgressState implements ProgressTextState {
 
     private final CircularProgressButton mButton;
 
-    private CircularProgressDrawable mCircularProgressDrawable;
     private Drawable mDefaultDrawable;
     private int mProgressStrokeWidth;
     private String mProgressText;
@@ -30,6 +29,7 @@ public class ProgressState implements ProgressTextState {
     private int mPaddingProgress;
 
     private CircularAnimatedDrawable mAnimatedDrawable;
+    private CircularProgressDrawable mCircularProgressDrawable;
 
     public ProgressState(CircularProgressButton button) {
         mButton = button;
