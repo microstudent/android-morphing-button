@@ -123,9 +123,9 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     }
 
     @Override
-    public void setProgress(int progress) {
+    public void setProgress(int progress, boolean useAnim) {
         if (mCurrentStateEnum == StateEnum.PROGRESS) {
-            ((ProgressState) getState(StateEnum.PROGRESS)).setProgress(progress);
+            ((ProgressState) getState(StateEnum.PROGRESS)).setProgress(progress, useAnim);
         }
     }
 

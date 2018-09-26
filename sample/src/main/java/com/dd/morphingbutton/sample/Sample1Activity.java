@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.impl.CircularProgressButton;
+import com.dd.morphingbutton.utils.ProgressGenerator;
 
 public class Sample1Activity extends BaseActivity {
 
@@ -46,7 +47,15 @@ public class Sample1Activity extends BaseActivity {
             public void onClick(View view) {
                 switch (button.getCurrentStateEnum()) {
                     case IDLE:
+                        ProgressGenerator generator = new ProgressGenerator(new ProgressGenerator.OnCompleteListener() {
+                            @Override
+                            public void onComplete() {
+                                button.unblockTouch();
+                            }
+                        });
+                        button.blockTouch(); // prevent user from clicking while button is in progress
                         button.setState(CircularProgressButton.StateEnum.PROGRESS, true);
+                        generator.start(button);
                         break;
                     case PROGRESS:
                         button.setState(CircularProgressButton.StateEnum.TEXT, true);

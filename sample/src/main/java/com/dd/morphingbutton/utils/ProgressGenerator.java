@@ -8,7 +8,6 @@ import java.util.Random;
 public class ProgressGenerator {
 
     public interface OnCompleteListener {
-
         void onComplete();
     }
 
@@ -26,7 +25,7 @@ public class ProgressGenerator {
             @Override
             public void run() {
                 mProgress += 5;
-                button.setProgress(mProgress);
+                button.setProgress(mProgress, true);
                 if (mProgress < 100) {
                     handler.postDelayed(this, generateDelay());
                 } else {
@@ -43,6 +42,6 @@ public class ProgressGenerator {
     private Random random = new Random();
 
     private int generateDelay() {
-        return random.nextInt(100);
+        return random.nextInt(1000);
     }
 }

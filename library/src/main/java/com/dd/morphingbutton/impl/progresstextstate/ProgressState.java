@@ -1,9 +1,11 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
+import android.animation.ValueAnimator;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.R;
@@ -13,8 +15,12 @@ import com.dd.morphingbutton.impl.CircularProgressButton;
 
 public class ProgressState implements ProgressTextState {
 
-    public static final int MAX_PROGRESS = 100;
+    //TODO fixme
+    public static final int MAX_PROGRESS = 101;
     public static final int MIN_PROGRESS = 0;
+    public static final int IDLE_STATE_PROGRESS = 0;
+    public static final int ERROR_STATE_PROGRESS = -1;
+    private static int PROGRESS_ANIMATION_DURATION = 800;
 
     private final CircularProgressButton mButton;
 
@@ -24,12 +30,18 @@ public class ProgressState implements ProgressTextState {
     private int mColorProgress;
     private int mColorIndicator;
     private int mColorIndicatorBackground;
-    private int mProgress;
-    private boolean mIndeterminateProgressMode = true;
+    private boolean mIndeterminateProgressMode;
     private int mPaddingProgress;
 
     private CircularAnimatedDrawable mAnimatedDrawable;
-    private CircularProgressDrawable mCircularProgressDrawable;
+    private CircularProgressDrawable mProgressDrawable;
+    private boolean mNeedInvalidateCenterIcon;
+
+    private int mProgress;
+    private int mAnimCurrentProgress;
+    private boolean isUseTransitionAnim;
+    private ValueAnimator mProgressAnimation;
+    private boolean mShouldShowCenterIcon;
 
     public ProgressState(CircularProgressButton button) {
         mButton = button;
@@ -71,9 +83,70 @@ public class ProgressState implements ProgressTextState {
     }
 
 
-    public void setProgress(int progress) {
+    public void setProgress(int progress, boolean useAnim) {
         mProgress = progress;
-        mButton.invalidate();
+        isUseTransitionAnim = useAnim;
+        if (mButton.isAnimationInProgress() || mButton.getWidth() == 0) {
+            return;
+        }
+
+        CircularProgressButton.StateEnum currentState = mButton.getCurrentStateEnum();
+
+        if (mProgress >= MAX_PROGRESS) {
+            if (currentState == CircularProgressButton.StateEnum.PROGRESS) {
+                mButton.setState(CircularProgressButton.StateEnum.COMPLETE, true);
+            } else if (currentState == CircularProgressButton.StateEnum.IDLE) {
+                mButton.setState(CircularProgressButton.StateEnum.COMPLETE, true);
+            }
+        } else if (mProgress > IDLE_STATE_PROGRESS) {
+            if (currentState == CircularProgressButton.StateEnum.IDLE || currentState == CircularProgressButton.StateEnum.ERROR) {
+                mButton.setState(CircularProgressButton.StateEnum.PROGRESS, true);
+            } else if (currentState == CircularProgressButton.StateEnum.PROGRESS) {
+                cancelProgressAnimation();
+                if (useAnim) {
+                    startProgressAnimation();
+                } else {
+                    mAnimCurrentProgress = mProgress;
+                    mButton.invalidate();
+                }
+            }
+        } else if (mProgress == ERROR_STATE_PROGRESS) {
+            if (currentState == CircularProgressButton.StateEnum.PROGRESS) {
+                mButton.setState(CircularProgressButton.StateEnum.ERROR, true);
+            } else if (currentState == CircularProgressButton.StateEnum.IDLE) {
+                mButton.setState(CircularProgressButton.StateEnum.ERROR, true);
+            }
+        } else if (mProgress == IDLE_STATE_PROGRESS) {
+            if (currentState == CircularProgressButton.StateEnum.COMPLETE) {
+                mButton.setState(CircularProgressButton.StateEnum.IDLE, true);
+            } else if (currentState == CircularProgressButton.StateEnum.PROGRESS) {
+                mButton.setState(CircularProgressButton.StateEnum.IDLE, true);
+            } else if (currentState == CircularProgressButton.StateEnum.ERROR) {
+                mButton.setState(CircularProgressButton.StateEnum.IDLE, true);
+            }
+        }
+    }
+
+    private void cancelProgressAnimation() {
+        if (mProgressAnimation != null) {
+            mProgressAnimation.cancel();
+            mProgressAnimation.removeAllUpdateListeners();
+            mProgressAnimation.removeAllListeners();
+        }
+    }
+
+    private void startProgressAnimation() {
+        mProgressAnimation = ValueAnimator.ofInt(mAnimCurrentProgress, mProgress);
+        mProgressAnimation.setDuration(PROGRESS_ANIMATION_DURATION);
+        mProgressAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        mProgressAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mAnimCurrentProgress = (Integer) animation.getAnimatedValue();
+                mButton.invalidate();
+            }
+        });
+        mProgressAnimation.start();
     }
 
     @Override
@@ -81,10 +154,21 @@ public class ProgressState implements ProgressTextState {
         mDefaultDrawable = mButton.getBackground();
         if (mIndeterminateProgressMode) {
             initAnimatedDrawable();
+            mButton.setBackgroundDrawable(mAnimatedDrawable);
+            mAnimatedDrawable.start();
+            mAnimatedDrawable.setAllowLoading(true);
+        } else {
+            initProgressDrawable();
+            mButton.setBackgroundDrawable(mProgressDrawable);
         }
-        mButton.setBackgroundDrawable(mAnimatedDrawable);
-        mAnimatedDrawable.start();
-        mAnimatedDrawable.setAllowLoading(true);
+    }
+
+    private void initProgressDrawable() {
+//        int offset = (mButton.getWidth() - mButton.getHeight()) / 2;
+        int size = mButton.getHeight() - mPaddingProgress * 2;
+        mProgressDrawable = new CircularProgressDrawable(size, mProgressStrokeWidth, mColorIndicator);
+//        int left = offset + mPaddingProgress;
+//        mProgressDrawable.setBounds(left, mPaddingProgress, left, mPaddingProgress);
     }
 
     private void initAnimatedDrawable() {
@@ -121,23 +205,64 @@ public class ProgressState implements ProgressTextState {
 
     @Override
     public void onDraw(@NonNull Canvas canvas) {
-//        if (mIndeterminateProgressMode) {
-//            drawIndeterminateProgress(canvas);
-//        } else {
-//            drawProgress(canvas);
-//        }
+        if (mIndeterminateProgressMode) {
+            drawIndeterminateProgress(canvas);
+        } else {
+            drawProgress(canvas);
+        }
     }
 
     private void drawProgress(Canvas canvas) {
-
+        if (mNeedInvalidateCenterIcon) {
+            mNeedInvalidateCenterIcon = false;
+            mProgressDrawable.setShowCenterIcon(mShouldShowCenterIcon);
+        }
+        // float angle = (360f / mMaxProgress) * mProgress;
+        float startAngle = 90 + (180f / MAX_PROGRESS) * mAnimCurrentProgress;
+        float sweepAngle = -(180f / MAX_PROGRESS) * 2 * mAnimCurrentProgress;
+        mProgressDrawable.setStartAngle(startAngle);
+        mProgressDrawable.setSweepAngle(sweepAngle);
+        mProgressDrawable.draw(canvas);
     }
 
     private void drawIndeterminateProgress(Canvas canvas) {
-        if (mAnimatedDrawable == null) {
-            initAnimatedDrawable();
-        } else {
-            mAnimatedDrawable.setAllowLoading(true);
-            mAnimatedDrawable.draw(canvas);
-        }
+//        if (mAnimatedDrawable == null) {
+//            initAnimatedDrawable();
+//        } else {
+//            mAnimatedDrawable.setAllowLoading(true);
+//            mAnimatedDrawable.draw(canvas);
+//        }
     }
+
+
+    /**
+     * 获取设置进度状态时，进度条样式
+     *
+     * @return
+     */
+    public boolean isIndeterminateProgressMode() {
+        return mIndeterminateProgressMode;
+    }
+
+    /**
+     * 设置进度模式，true为无进度模式
+     *
+     * @param indeterminateProgressMode
+     */
+    public void setIndeterminateProgressMode(boolean indeterminateProgressMode) {
+        this.mIndeterminateProgressMode = indeterminateProgressMode;
+    }
+
+
+
+    /**
+     * 是否显示中心图标，默认为暂停图标
+     *
+     * @param showCenterIcon
+     */
+    public void setShowCenterIcon(boolean showCenterIcon) {
+        mShouldShowCenterIcon = showCenterIcon;
+        mNeedInvalidateCenterIcon = true;
+    }
+
 }

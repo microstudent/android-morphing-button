@@ -26,7 +26,7 @@ public class CompleteState implements ProgressTextState {
     @NonNull
     @Override
     public MorphingButton.Params getParams() {
-        return null;
+        return MorphingButton.Params.create();
     }
 
     @Override

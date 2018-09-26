@@ -1,5 +1,5 @@
 package com.dd.morphingbutton;
 
 public interface IProgress {
-    void setProgress(int progress);
+    void setProgress(int progress, boolean useAnim);
 }

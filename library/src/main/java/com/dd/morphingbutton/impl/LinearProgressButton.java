@@ -62,12 +62,6 @@ public class LinearProgressButton extends MorphingButton implements IProgress {
         mRectF = null;
     }
 
-    @Override
-    public void setProgress(int progress) {
-        mProgress = progress;
-        invalidate();
-    }
-
     public void morphToProgress(int color, int progressColor, int progressCornerRadius, int width, int height, int duration) {
         mProgressCornerRadius = progressCornerRadius;
         mProgressColor = progressColor;
@@ -83,4 +77,9 @@ public class LinearProgressButton extends MorphingButton implements IProgress {
     }
 
 
+    @Override
+    public void setProgress(int progress, boolean useAnim) {
+        mProgress = progress;
+        invalidate();
+    }
 }

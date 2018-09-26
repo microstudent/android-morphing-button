@@ -130,6 +130,10 @@ public class MorphingButton extends AppCompatButton {
         finalizeMorphing(params);
     }
 
+    public boolean isAnimationInProgress() {
+        return mAnimationInProgress;
+    }
+
     private void finalizeMorphing(@NonNull Params params) {
         mAnimationInProgress = false;
 
