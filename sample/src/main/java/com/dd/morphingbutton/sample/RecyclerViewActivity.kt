@@ -39,6 +39,7 @@ class RecyclerViewActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: MyViewHolder?, position: Int) {
             val button = holder!!.button
             button.setState(CircularProgressButton.StateEnum.IDLE, false)
+            button.setShowCenterIcon(true)
             button.setOnClickListener(View.OnClickListener {
                 when (button.getCurrentStateEnum()) {
                     CircularProgressButton.StateEnum.IDLE -> {

@@ -34,6 +34,7 @@ public class MorphingButton extends AppCompatButton {
 
     private StrokeGradientDrawable mDrawableNormal;
     private StrokeGradientDrawable mDrawablePressed;
+    private StrokeGradientDrawable mDrawableFocused;
 
     public MorphingButton(Context context) {
         super(context);
@@ -66,10 +67,19 @@ public class MorphingButton extends AppCompatButton {
     public void morph(@NonNull Params params) {
         if (!mAnimationInProgress) {
 
-            mDrawablePressed.setColor(params.colorPressed);
+            if (params.colorPressed != null) {
+                mDrawablePressed.setColor(params.colorPressed);
+            }
             mDrawablePressed.setCornerRadius(params.cornerRadius);
             mDrawablePressed.setStrokeColor(params.strokeColor);
             mDrawablePressed.setStrokeWidth(params.strokeWidth);
+
+            if (params.colorFocus != null) {
+                mDrawableFocused.setColor(params.colorFocus);
+            }
+            mDrawableFocused.setCornerRadius(params.cornerRadius);
+            mDrawableFocused.setStrokeColor(params.strokeColor);
+            mDrawableFocused.setStrokeWidth(params.strokeWidth);
 
             if (params.duration == 0) {
                 morphWithoutAnimation(params);
@@ -184,6 +194,7 @@ public class MorphingButton extends AppCompatButton {
         StateListDrawable background = new StateListDrawable();
         mDrawableNormal = createDrawable(blue, cornerRadius, 0);
         mDrawablePressed = createDrawable(blueDark, cornerRadius, 0);
+        mDrawableFocused = createDrawable(blueDark, cornerRadius, 0);
 
         mSolidColor = blue;
         mStrokeColor = blue;
@@ -191,6 +202,7 @@ public class MorphingButton extends AppCompatButton {
         mTextColor = getCurrentTextColor();
 
         background.addState(new int[]{android.R.attr.state_pressed}, mDrawablePressed.getGradientDrawable());
+        background.addState(new int[]{android.R.attr.state_focused}, mDrawableFocused.getGradientDrawable());
         background.addState(StateSet.WILD_CARD, mDrawableNormal.getGradientDrawable());
 
         setBackgroundCompat(background);
@@ -246,7 +258,8 @@ public class MorphingButton extends AppCompatButton {
         private int height;
         private Integer textColor;
         private Integer solidColor;
-        private int colorPressed;
+        private Integer colorFocus;
+        private Integer colorPressed;
         private int duration;
         private int icon;
         private int strokeWidth;
@@ -299,6 +312,11 @@ public class MorphingButton extends AppCompatButton {
 
         public Params colorPressed(int colorPressed) {
             this.colorPressed = colorPressed;
+            return this;
+        }
+
+        public Params colorFocused(int colorFocus) {
+            this.colorFocus = colorFocus;
             return this;
         }
 

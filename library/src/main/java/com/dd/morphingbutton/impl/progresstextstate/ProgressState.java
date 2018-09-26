@@ -26,7 +26,7 @@ public class ProgressState implements ProgressTextState {
 
     private Drawable mDefaultDrawable;
     private int mProgressStrokeWidth;
-    private String mProgressText;
+    private String mProgressText = "";
     private int mColorProgress;
     private int mColorIndicator;
     private int mColorIndicatorBackground;
@@ -159,7 +159,6 @@ public class ProgressState implements ProgressTextState {
             mAnimatedDrawable.setAllowLoading(true);
         } else {
             initProgressDrawable();
-            mButton.setBackgroundDrawable(mProgressDrawable);
         }
     }
 
@@ -200,7 +199,9 @@ public class ProgressState implements ProgressTextState {
         return MorphingButton.Params.create()
                 .width(right - left)
                 .height(bottom - top)
-                .text("");
+                .solidColor(mColorProgress)
+                .strokeColor(mColorIndicatorBackground)
+                .text(mProgressText);
     }
 
     @Override

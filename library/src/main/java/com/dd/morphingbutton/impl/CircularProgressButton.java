@@ -129,6 +129,10 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         }
     }
 
+    public void setShowCenterIcon(boolean showCenterIcon) {
+        ((ProgressState) getState(StateEnum.PROGRESS)).setShowCenterIcon(showCenterIcon);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
