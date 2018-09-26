@@ -1,6 +1,7 @@
 package com.dd.morphingbutton.sample;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -32,6 +33,11 @@ public class MainActivity extends ListActivity {
                 break;
             case 3:
                 Sample4Activity.startThisActivity(this);
+                break;
+            case 4:
+                startActivity(new Intent(this, RecyclerViewActivity.class));
+                break;
+            default:
                 break;
         }
     }
