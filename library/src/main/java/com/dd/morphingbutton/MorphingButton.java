@@ -24,7 +24,8 @@ public class MorphingButton extends AppCompatButton {
     private int mWidth;
     @Nullable
     private Integer mSolidColor;
-    private int mCornerRadius;
+    @Nullable
+    private Float mCornerRadius;
     private int mStrokeWidth;
     private int mStrokeColor;
     @Nullable
@@ -70,14 +71,18 @@ public class MorphingButton extends AppCompatButton {
             if (params.colorPressed != null) {
                 mDrawablePressed.setColor(params.colorPressed);
             }
-            mDrawablePressed.setCornerRadius(params.cornerRadius);
+            if (params.cornerRadius != null) {
+                mDrawablePressed.setCornerRadius(params.cornerRadius);
+            }
             mDrawablePressed.setStrokeColor(params.strokeColor);
             mDrawablePressed.setStrokeWidth(params.strokeWidth);
 
             if (params.colorFocus != null) {
                 mDrawableFocused.setColor(params.colorFocus);
             }
-            mDrawableFocused.setCornerRadius(params.cornerRadius);
+            if (params.cornerRadius != null) {
+                mDrawableFocused.setCornerRadius(params.cornerRadius);
+            }
             mDrawableFocused.setStrokeColor(params.strokeColor);
             mDrawableFocused.setStrokeWidth(params.strokeWidth);
 
@@ -104,11 +109,12 @@ public class MorphingButton extends AppCompatButton {
         MorphingAnimation.Params animationParams = MorphingAnimation.Params.create(this)
                 .textColor(mTextColor, params.textColor)
                 .solidColor(mSolidColor, params.solidColor)
-                .cornerRadius(mCornerRadius, params.cornerRadius)
+                .cornerRadius(mCornerRadius == null ? 0 : mCornerRadius, params.cornerRadius)
                 .strokeWidth(mStrokeWidth, params.strokeWidth)
                 .strokeColor(mStrokeColor, params.strokeColor)
                 .height(getHeight(), params.height)
                 .width(getWidth(), params.width)
+                .backgroundWidth(getBackground().getBounds().width(), params.backgroundWidth)
                 .duration(params.duration)
                 .listener(new MorphingAnimation.Listener() {
                     @Override
@@ -198,7 +204,7 @@ public class MorphingButton extends AppCompatButton {
 
         mSolidColor = blue;
         mStrokeColor = blue;
-        mCornerRadius = cornerRadius;
+        mCornerRadius = (float) cornerRadius;
         mTextColor = getCurrentTextColor();
 
         background.addState(new int[]{android.R.attr.state_pressed}, mDrawablePressed.getGradientDrawable());
@@ -253,7 +259,9 @@ public class MorphingButton extends AppCompatButton {
     }
 
     public static class Params {
-        private int cornerRadius;
+        @Nullable
+        private Float cornerRadius;
+        private int backgroundWidth;
         private int width;
         private int height;
         private Integer textColor;
@@ -286,7 +294,12 @@ public class MorphingButton extends AppCompatButton {
         }
 
         public Params cornerRadius(int cornerRadius) {
-            this.cornerRadius = cornerRadius;
+            this.cornerRadius = (float) cornerRadius;
+            return this;
+        }
+
+        public Params backgroundWidth(int backgroundWidth) {
+            this.backgroundWidth = backgroundWidth;
             return this;
         }
 

@@ -163,11 +163,11 @@ public class ProgressState implements ProgressTextState {
     }
 
     private void initProgressDrawable() {
-//        int offset = (mButton.getWidth() - mButton.getHeight()) / 2;
+        int offset = (mButton.getWidth() - mButton.getHeight()) / 2;
         int size = mButton.getHeight() - mPaddingProgress * 2;
         mProgressDrawable = new CircularProgressDrawable(size, mProgressStrokeWidth, mColorIndicator);
-//        int left = offset + mPaddingProgress;
-//        mProgressDrawable.setBounds(left, mPaddingProgress, left, mPaddingProgress);
+        int left = offset + mPaddingProgress;
+        mProgressDrawable.setBounds(left, mPaddingProgress, left, mPaddingProgress);
     }
 
     private void initAnimatedDrawable() {
@@ -197,10 +197,10 @@ public class ProgressState implements ProgressTextState {
         int top = mPaddingProgress;
 
         return MorphingButton.Params.create()
-                .width(right - left)
-                .height(bottom - top)
+                .backgroundWidth(right - left)
                 .solidColor(mColorProgress)
                 .strokeColor(mColorIndicatorBackground)
+                .strokeWidth(mProgressStrokeWidth)
                 .text(mProgressText);
     }
 

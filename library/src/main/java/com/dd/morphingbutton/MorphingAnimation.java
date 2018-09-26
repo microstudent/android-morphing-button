@@ -17,13 +17,17 @@ public class MorphingAnimation {
     public static class Params {
 
         private float fromCornerRadius;
-        private float toCornerRadius;
+        @Nullable
+        private Float toCornerRadius;
 
         private int fromHeight;
         private int toHeight;
 
         private int fromWidth;
         private int toWidth;
+
+        private int fromBackgroundWidth;
+        private int toBackgroundWidth;
 
         @Nullable
         private Integer fromColor;
@@ -70,7 +74,7 @@ public class MorphingAnimation {
             return this;
         }
 
-        public Params cornerRadius(int fromCornerRadius, int toCornerRadius) {
+        public Params cornerRadius(float fromCornerRadius, Float toCornerRadius) {
             this.fromCornerRadius = fromCornerRadius;
             this.toCornerRadius = toCornerRadius;
             return this;
@@ -85,6 +89,12 @@ public class MorphingAnimation {
         public Params width(int fromWidth, int toWidth) {
             this.fromWidth = fromWidth;
             this.toWidth = toWidth;
+            return this;
+        }
+
+        public Params backgroundWidth(int fromWidth, int toWidth) {
+            this.fromBackgroundWidth = fromWidth;
+            this.toBackgroundWidth = toWidth;
             return this;
         }
 
@@ -116,10 +126,13 @@ public class MorphingAnimation {
     public void start() {
         List<Animator> animators = new ArrayList<>();
 
-        StrokeGradientDrawable background = mParams.button.getDrawableNormal();
+        final StrokeGradientDrawable background = mParams.button.getDrawableNormal();
 
-        ObjectAnimator cornerAnimation =
-                ObjectAnimator.ofFloat(background, "cornerRadius", mParams.fromCornerRadius, mParams.toCornerRadius);
+        if (mParams.toCornerRadius != null) {
+            ObjectAnimator cornerAnimation =
+                    ObjectAnimator.ofFloat(background, "cornerRadius", mParams.fromCornerRadius, mParams.toCornerRadius);
+            animators.add(cornerAnimation);
+        }
 
         ObjectAnimator strokeWidthAnimation =
                 ObjectAnimator.ofInt(background, "strokeWidth", mParams.fromStrokeWidth, mParams.toStrokeWidth);
@@ -161,6 +174,37 @@ public class MorphingAnimation {
                 }
             });
             animators.add(sizeAnimator);
+        }
+
+        if (mParams.fromBackgroundWidth != mParams.toBackgroundWidth && mParams.toBackgroundWidth > 0) {
+            PropertyValuesHolder widthHolder = PropertyValuesHolder.ofInt("width", mParams.fromBackgroundWidth, mParams.toBackgroundWidth);
+
+            ValueAnimator backgroundSizeAnimator = ValueAnimator.ofPropertyValuesHolder(widthHolder);
+            backgroundSizeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int width = (Integer) animation.getAnimatedValue("width");
+
+                    int leftOffset;
+                    int rightOffset;
+                    int padding;
+
+                    if (mParams.fromBackgroundWidth > mParams.toBackgroundWidth) {
+                        leftOffset = (mParams.fromBackgroundWidth - width) / 2;
+                        rightOffset = mParams.fromBackgroundWidth - leftOffset;
+                        padding = 0;
+                    } else {
+                        leftOffset = (mParams.toBackgroundWidth - width) / 2;
+                        rightOffset = mParams.toBackgroundWidth - leftOffset;
+                        padding = 0;
+                    }
+
+                    background.getGradientDrawable()
+                            .setBounds(leftOffset + padding, padding, rightOffset - padding - 1,
+                                    mParams.button.getHeight() - padding - 1);
+                }
+            });
+            animators.add(backgroundSizeAnimator);
         }
 
         AnimatorSet animatorSet = new AnimatorSet();
