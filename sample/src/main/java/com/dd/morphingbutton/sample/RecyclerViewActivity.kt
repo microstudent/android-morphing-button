@@ -41,15 +41,17 @@ class RecyclerViewActivity : AppCompatActivity() {
             button.setState(CircularProgressButton.StateEnum.IDLE, false)
             button.setShowCenterIcon(true)
             button.setOnClickListener(View.OnClickListener {
-                when (button.getCurrentStateEnum()) {
+                when (button.currentStateEnum) {
                     CircularProgressButton.StateEnum.IDLE -> {
-                        val generator = ProgressGenerator(ProgressGenerator.OnCompleteListener { button.unblockTouch() })
-                        button.blockTouch() // prevent user from clicking while button is in progress
+                        val generator = ProgressGenerator(ProgressGenerator.OnCompleteListener {})
                         button.setState(CircularProgressButton.StateEnum.PROGRESS, true)
                         generator.start(button)
                     }
-                    CircularProgressButton.StateEnum.PROGRESS -> button.setState(CircularProgressButton.StateEnum.TEXT, true)
-                    CircularProgressButton.StateEnum.TEXT -> button.setState(CircularProgressButton.StateEnum.IDLE, true)
+                    CircularProgressButton.StateEnum.PROGRESS -> {
+                        button.setState(CircularProgressButton.StateEnum.TEXT, true)
+                    }
+                    CircularProgressButton.StateEnum.TEXT -> button.setState(CircularProgressButton.StateEnum.COMPLETE, true)
+                    CircularProgressButton.StateEnum.COMPLETE -> button.setState(CircularProgressButton.StateEnum.IDLE, true)
                     else -> {
                     }
                 }

@@ -30,6 +30,11 @@
         android:includeFontPadding="false"
         android:elevation="0dp"
 
+        app:mcCirButtonStrokeWidth="4px"
+        app:mcCirButtonCornerRadius="48dp"
+        app:mcCirButtonColorProgress="@android:color/transparent"
+
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -72,10 +72,11 @@ public class IdleState implements ProgressTextState {
                 .create()
                 .textColor(Color.WHITE)
                 .solidColor(mIdleColorState.getDefaultColor())
-                .colorPressed(mIdleColorState.getColorForState(new int[]{android.R.attr.state_pressed}, mIdleColorState.getDefaultColor()))
+                .colorPressed(mIdleColorState.getColorForState(new int[]{android.R.attr.state_pressed}, 0))
                 .strokeWidth(mStrokeWidth)
                 .width(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_width))
                 .height(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_height))
+                .backgroundWidth(mButton.getWidth())
                 .cornerRadius(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_corner_radius))
                 .duration(300)
                 .text("安装");
