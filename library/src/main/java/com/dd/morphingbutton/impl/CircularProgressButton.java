@@ -107,8 +107,20 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         return progressTextState;
     }
 
-    public ProgressState getProgressStateImpl() {
+    private ProgressState getProgressStateImpl() {
         return ((ProgressState) getState(StateEnum.PROGRESS));
+    }
+
+    private ErrorState getErrorStateImpl() {
+        return (ErrorState) getState(StateEnum.ERROR);
+    }
+
+    private CompleteState getCompleteStateImpl() {
+        return (CompleteState) getState(StateEnum.COMPLETE);
+    }
+
+    private IdleState getIdleStateImpl() {
+        return (IdleState) getState(StateEnum.IDLE);
     }
 
     public ProgressTextState getCurrentStateImpl() {
@@ -262,15 +274,87 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
             default:
                 break;
         }
+        //fixme  刷新
         drawableStateChanged();
     }
 
-    private CompleteState getCompleteStateImpl() {
-        return (CompleteState) getState(StateEnum.COMPLETE);
+    /**
+     * 设置不同状态的字体颜色
+     *
+     * @param state
+     * @param colorStateList
+     */
+    public void setStateTextColor(StateEnum state, ColorStateList colorStateList) {
+        if (colorStateList == null) {
+            return;
+        }
+        switch (state) {
+            case IDLE:
+                getIdleStateImpl().setTextColor(colorStateList);
+                break;
+            case COMPLETE:
+                getCompleteStateImpl().setTextColor(colorStateList);
+                break;
+            case ERROR:
+                getErrorStateImpl().setTextColor(colorStateList);
+                break;
+            default:
+                break;
+        }
+        //fixme 刷新
     }
 
-    private IdleState getIdleStateImpl() {
-        return (IdleState) getState(StateEnum.IDLE);
+
+    /**
+     * 设置不同状态的文字内容
+     *
+     * @param state
+     * @param text
+     */
+    public void setStateText(StateEnum state, String text) {
+        switch (state) {
+            case IDLE:
+                getIdleStateImpl().setText(text);
+                break;
+            case COMPLETE:
+                getCompleteStateImpl().setText(text);
+                break;
+            case ERROR:
+                getErrorStateImpl().setText(text);
+                break;
+            default:
+                break;
+        }
+        if (mCurrentStateEnum == state && !isAnimationInProgress()) {
+            //fixme 刷新
+        }
     }
 
+
+    /**
+     * 设置进度条颜色
+     *
+     * @param color
+     */
+    public void setProgressIndicatorColor(int color) {
+        getProgressStateImpl().setIndicatorColor(color);
+    }
+
+    /**
+     * 设置进度条宽度
+     *
+     * @param width
+     */
+    public void setProgressStrokeWidth(int width) {
+        getProgressStateImpl().setStrokeWidth(width);
+    }
+
+    /**
+     * 设置进度条背景颜色
+     *
+     * @param backgroundColor
+     */
+    public void setIndicatorBackgroundColor(int backgroundColor) {
+        getProgressStateImpl().setIndicatorBackgroundColor(backgroundColor);
+    }
 }

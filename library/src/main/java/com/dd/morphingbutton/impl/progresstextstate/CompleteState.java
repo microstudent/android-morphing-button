@@ -53,7 +53,7 @@ public class CompleteState implements ProgressTextState {
                 R.styleable.CircularProgressButton_mcCirButtonCornerRadius, 0);
         int completeStateSelector = attr.getResourceId(
                 R.styleable.CircularProgressButton_mcCirButtonSelectorComplete,
-                R.color.mc_cir_progress_button_green);
+                R.color.mc_cir_progress_button_white);
         mCompleteColorState = mButton.getResources().getColorStateList(completeStateSelector);
         int completeStrokeColorSelector = attr.getResourceId(R.styleable.CircularProgressButton_mcCirButtonStrokeColorComplete, completeStateSelector);
         mStrokeColorComplete = mButton.getResources().getColorStateList(completeStrokeColorSelector);
@@ -93,6 +93,14 @@ public class CompleteState implements ProgressTextState {
 
     @Override
     public void onDraw(@NonNull Canvas canvas) {
+
+    }
+
+    public void setTextColor(ColorStateList colorStateList) {
+        mTextColorComplete = colorStateList;
+    }
+
+    public void setText(String text) {
 
     }
 }

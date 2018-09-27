@@ -1,5 +1,6 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -8,6 +9,8 @@ import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.impl.CircularProgressButton;
 
 public class ErrorState implements ProgressTextState {
+
+    private ColorStateList mTextColor;
 
     public ErrorState(CircularProgressButton button) {
 
@@ -35,6 +38,14 @@ public class ErrorState implements ProgressTextState {
 
     @Override
     public void onDraw(@NonNull Canvas canvas) {
+
+    }
+
+    public void setTextColor(ColorStateList colorStateList) {
+        mTextColor = colorStateList;
+    }
+
+    public void setText(String text) {
 
     }
 }

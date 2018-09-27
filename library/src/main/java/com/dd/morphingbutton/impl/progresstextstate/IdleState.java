@@ -21,6 +21,7 @@ public class IdleState implements ProgressTextState {
     private float mCornerRadius;
     private ColorStateList mIdleColorState;
     private ColorStateList mStrokeColorIdle;
+    private ColorStateList mTextColor;
 
     public IdleState(CircularProgressButton button) {
         mButton = button;
@@ -86,5 +87,13 @@ public class IdleState implements ProgressTextState {
 
     public void setStrokeColorIdle(ColorStateList strokeColorIdle) {
         mStrokeColorIdle = strokeColorIdle;
+    }
+
+    public void setTextColor(ColorStateList colorStateList) {
+        mTextColor = colorStateList;
+    }
+
+    public void setText(String text) {
+
     }
 }

@@ -269,4 +269,32 @@ public class ProgressState implements ProgressTextState {
     public int getProgress() {
         return mProgress;
     }
+
+    public void setIndicatorColor(int color) {
+        mColorIndicator = color;
+        if (mAnimatedDrawable != null) {
+            mAnimatedDrawable.setIndicatorColor(color);
+        }
+        if (mProgressDrawable != null) {
+            mProgressDrawable.setIndicatorColor(color);
+        }
+    }
+
+    public void setStrokeWidth(int width) {
+        if (width > 0 && mProgressStrokeWidth != width) {
+            mProgressStrokeWidth = width;
+            if (mAnimatedDrawable != null) {
+                mAnimatedDrawable.setStrokeWidth(width);
+            }
+            if (mProgressDrawable != null) {
+                mProgressDrawable.setStrokeWidth(width);
+            }
+        }
+    }
+
+    public void setIndicatorBackgroundColor(int backgroundColor) {
+        if (mColorIndicatorBackground != backgroundColor) {
+            mColorIndicatorBackground = backgroundColor;
+        }
+    }
 }
