@@ -15,7 +15,7 @@ public class MorphingParams {
     private int backgroundWidth;
     private int width;
     private int height;
-    private Integer textColor;
+    private ColorStateList textColor;
 
     private int duration;
     private int icon;
@@ -82,6 +82,11 @@ public class MorphingParams {
     }
 
     public MorphingParams textColor(@ColorInt int color) {
+        this.textColor = ColorStateList.valueOf(color);
+        return this;
+    }
+
+    public MorphingParams textColor(ColorStateList color) {
         this.textColor = color;
         return this;
     }
@@ -141,7 +146,10 @@ public class MorphingParams {
         return height;
     }
 
-    public Integer getTextColor() {
+    public ColorStateList getTextColor() {
+        if (textColor == null) {
+            return ColorStateList.valueOf(Color.TRANSPARENT);
+        }
         return textColor;
     }
 

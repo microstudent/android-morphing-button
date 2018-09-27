@@ -28,7 +28,7 @@ public class MorphingButton extends AppCompatButton {
     private int mStrokeWidth;
     private ColorStateList mStrokeColor;
     @Nullable
-    private Integer mTextColor;
+    private ColorStateList mTextColor;
 
     protected boolean mAnimationInProgress;
 
@@ -86,7 +86,7 @@ public class MorphingButton extends AppCompatButton {
         setPadding(mPadding.left, mPadding.top, mPadding.right, mPadding.bottom);
 
         MorphingAnimation.Params animationParams = MorphingAnimation.Params.create(this)
-                .textColor(mTextColor, params.getTextColor())
+                .textColor(mTextColor == null ? Color.TRANSPARENT : mTextColor.getDefaultColor(), params.getTextColor().getDefaultColor())
                 .solidColor(mSolidColor == null ? Color.TRANSPARENT : mSolidColor.getDefaultColor(), params.getSolidColor().getDefaultColor())
                 .cornerRadius(mCornerRadius == null ? 0 : mCornerRadius, params.getCornerRadius())
                 .strokeWidth(mStrokeWidth, params.getStrokeWidth())
@@ -195,7 +195,7 @@ public class MorphingButton extends AppCompatButton {
         mSolidColor = colorStateList;
         mStrokeColor = colorStateList;
         mCornerRadius = (float) cornerRadius;
-        mTextColor = getCurrentTextColor();
+        mTextColor = getTextColors();
 
         setBackgroundCompat(mDrawableNormal.getGradientDrawable());
     }
