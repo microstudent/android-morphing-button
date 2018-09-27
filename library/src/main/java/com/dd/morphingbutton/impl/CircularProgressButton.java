@@ -1,7 +1,6 @@
 package com.dd.morphingbutton.impl;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -12,6 +11,7 @@ import android.util.AttributeSet;
 
 import com.dd.morphingbutton.IProgress;
 import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.progresstextstate.CompleteState;
 import com.dd.morphingbutton.impl.progresstextstate.ErrorState;
@@ -89,7 +89,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
             mCurrentStateImpl.stop();
         }
         mCurrentStateImpl = getState(stateEnum);
-        Params params = mCurrentStateImpl.getParams();
+        MorphingParams params = mCurrentStateImpl.getParams();
         morph(withAnim ? params.duration(300) : params.duration(0));
         mCurrentStateImpl.start();
         mCurrentStateEnum = stateEnum;
@@ -124,7 +124,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     }
 
     @Override
-    public void morph(@NonNull Params params) {
+    public void morph(@NonNull MorphingParams params) {
         super.morph(params);
     }
 

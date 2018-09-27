@@ -6,9 +6,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.util.AttributeSet;
 
-import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.CircularProgressButton;
 
@@ -63,12 +62,11 @@ public class IdleState implements ProgressTextState {
 
     @NonNull
     @Override
-    public MorphingButton.Params getParams() {
-        return MorphingButton.Params
+    public MorphingParams getParams() {
+        return MorphingParams
                 .create()
                 .textColor(Color.WHITE)
-                .solidColor(mIdleColorState.getDefaultColor())
-                .colorPressed(mIdleColorState.getColorForState(new int[]{android.R.attr.state_pressed}, 0))
+                .solidColor(mIdleColorState)
                 .strokeWidth(mStrokeWidth)
                 .width(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_width))
                 .height(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_height))

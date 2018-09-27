@@ -4,10 +4,9 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 
-import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.CircularProgressButton;
 
@@ -73,8 +72,8 @@ public class CompleteState implements ProgressTextState {
 
     @NonNull
     @Override
-    public MorphingButton.Params getParams() {
-        return MorphingButton.Params.create()
+    public MorphingParams getParams() {
+        return MorphingParams.create()
                 .backgroundWidth(mButton.getWidth())
                 .solidColor(mCompleteColor)
                 .strokeWidth(mStrokeWidth)

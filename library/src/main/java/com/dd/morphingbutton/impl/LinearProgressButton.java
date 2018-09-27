@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import com.dd.morphingbutton.IProgress;
 import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.MorphingParams;
 
 public class LinearProgressButton extends MorphingButton implements IProgress {
 
@@ -55,7 +56,7 @@ public class LinearProgressButton extends MorphingButton implements IProgress {
     }
 
     @Override
-    public void morph(@NonNull Params params) {
+    public void morph(@NonNull MorphingParams params) {
         super.morph(params);
         mProgress = MIN_PROGRESS;
         mPaint = null;
@@ -66,7 +67,7 @@ public class LinearProgressButton extends MorphingButton implements IProgress {
         mProgressCornerRadius = progressCornerRadius;
         mProgressColor = progressColor;
 
-        MorphingButton.Params longRoundedSquare = MorphingButton.Params.create()
+        MorphingParams longRoundedSquare = MorphingParams.create()
                 .duration(duration)
                 .cornerRadius(mProgressCornerRadius)
                 .width(width)

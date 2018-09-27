@@ -1,18 +1,17 @@
 package com.dd.morphingbutton;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
-import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
-import android.util.StateSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +22,17 @@ public class MorphingButton extends AppCompatButton {
     private int mHeight;
     private int mWidth;
     @Nullable
-    private Integer mSolidColor;
+    private ColorStateList mSolidColor;
     @Nullable
     private Float mCornerRadius;
     private int mStrokeWidth;
-    private int mStrokeColor;
+    private ColorStateList mStrokeColor;
     @Nullable
     private Integer mTextColor;
 
     protected boolean mAnimationInProgress;
 
     private StrokeGradientDrawable mDrawableNormal;
-    private StrokeGradientDrawable mDrawablePressed;
-    private StrokeGradientDrawable mDrawableFocused;
 
     public MorphingButton(Context context) {
         super(context);
@@ -65,57 +62,39 @@ public class MorphingButton extends AppCompatButton {
         return mDrawableNormal;
     }
 
-    public void morph(@NonNull Params params) {
+    public void morph(@NonNull MorphingParams params) {
         if (!mAnimationInProgress) {
 
-            if (params.colorPressed != null) {
-                mDrawablePressed.setColor(params.colorPressed);
-            }
-            if (params.cornerRadius != null) {
-                mDrawablePressed.setCornerRadius(params.cornerRadius);
-            }
-            mDrawablePressed.setStrokeColor(params.strokeColor);
-            mDrawablePressed.setStrokeWidth(params.strokeWidth);
-
-            if (params.colorFocus != null) {
-                mDrawableFocused.setColor(params.colorFocus);
-            }
-            if (params.cornerRadius != null) {
-                mDrawableFocused.setCornerRadius(params.cornerRadius);
-            }
-            mDrawableFocused.setStrokeColor(params.strokeColor);
-            mDrawableFocused.setStrokeWidth(params.strokeWidth);
-
-            if (params.duration == 0) {
+            if (params.getDuration() == 0) {
                 morphWithoutAnimation(params);
             } else {
                 morphWithAnimation(params);
             }
 
-            mSolidColor = params.solidColor;
-            mCornerRadius = params.cornerRadius;
-            mStrokeWidth = params.strokeWidth;
-            mStrokeColor = params.strokeColor;
-            mTextColor = params.textColor;
+            mSolidColor = params.getSolidColor();
+            mCornerRadius = params.getCornerRadius();
+            mStrokeWidth = params.getStrokeWidth();
+            mStrokeColor = params.getStrokeColor();
+            mTextColor = params.getTextColor();
         }
     }
 
-    private void morphWithAnimation(@NonNull final Params params) {
+    private void morphWithAnimation(@NonNull final MorphingParams params) {
         mAnimationInProgress = true;
         setText(null);
         setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         setPadding(mPadding.left, mPadding.top, mPadding.right, mPadding.bottom);
 
         MorphingAnimation.Params animationParams = MorphingAnimation.Params.create(this)
-                .textColor(mTextColor, params.textColor)
-                .solidColor(mSolidColor, params.solidColor)
-                .cornerRadius(mCornerRadius == null ? 0 : mCornerRadius, params.cornerRadius)
-                .strokeWidth(mStrokeWidth, params.strokeWidth)
-                .strokeColor(mStrokeColor, params.strokeColor)
-                .height(getHeight(), params.height)
-                .width(getWidth(), params.width)
-                .backgroundWidth(getBackground().getBounds().width(), params.backgroundWidth)
-                .duration(params.duration)
+                .textColor(mTextColor, params.getTextColor())
+                .solidColor(mSolidColor == null ? Color.TRANSPARENT : mSolidColor.getDefaultColor(), params.getSolidColor().getDefaultColor())
+                .cornerRadius(mCornerRadius == null ? 0 : mCornerRadius, params.getCornerRadius())
+                .strokeWidth(mStrokeWidth, params.getStrokeWidth())
+                .strokeColor(mStrokeColor == null ? Color.TRANSPARENT : mStrokeColor.getDefaultColor(), params.getStrokeColor().getDefaultColor())
+                .height(getHeight(), params.getHeight())
+                .width(getWidth(), params.getWidth())
+                .backgroundWidth(getBackground().getBounds().width(), params.getBackgroundWidth())
+                .duration(params.getDuration())
                 .listener(new MorphingAnimation.Listener() {
                     @Override
                     public void onAnimationEnd() {
@@ -127,20 +106,22 @@ public class MorphingButton extends AppCompatButton {
         animation.start();
     }
 
-    private void morphWithoutAnimation(@NonNull Params params) {
-        mDrawableNormal.setColor(params.solidColor);
-        mDrawableNormal.setCornerRadius(params.cornerRadius);
-        mDrawableNormal.setStrokeColor(params.strokeColor);
-        mDrawableNormal.setStrokeWidth(params.strokeWidth);
+    private void morphWithoutAnimation(@NonNull MorphingParams params) {
+        if (params.getCornerRadius() != null) {
+            mDrawableNormal.setCornerRadius(params.getCornerRadius());
+        }
+        mDrawableNormal.setColor(params.getSolidColor());
+        mDrawableNormal.setStrokeColor(params.getStrokeColor());
+        mDrawableNormal.setStrokeWidth(params.getStrokeWidth());
 
-        if(params.width != 0 && params.height !=0) {
+        if(params.getWidth() != 0 && params.getHeight() !=0) {
             ViewGroup.LayoutParams layoutParams = getLayoutParams();
-            layoutParams.width = params.width;
-            layoutParams.height = params.height;
+            layoutParams.width = params.getWidth();
+            layoutParams.height = params.getHeight();
             setLayoutParams(layoutParams);
         }
-        if (params.textColor != null) {
-            setTextColor(params.textColor);
+        if (params.getTextColor() != null) {
+            setTextColor(params.getTextColor());
         }
 
         finalizeMorphing(params);
@@ -150,20 +131,23 @@ public class MorphingButton extends AppCompatButton {
         return mAnimationInProgress;
     }
 
-    private void finalizeMorphing(@NonNull Params params) {
+    private void finalizeMorphing(@NonNull MorphingParams params) {
         mAnimationInProgress = false;
 
-        if (params.icon != 0 && params.text != null) {
-            setIconLeft(params.icon);
-            setText(params.text);
-        } else if (params.icon != 0) {
-            setIcon(params.icon);
-        } else if(params.text != null) {
-            setText(params.text);
+        if (params.getIcon() != 0 && params.getText() != null) {
+            setIconLeft(params.getIcon());
+            setText(params.getText());
+        } else if (params.getIcon() != 0) {
+            setIcon(params.getIcon());
+        } else if(params.getText() != null) {
+            setText(params.getText());
         }
 
-        if (params.animationListener != null) {
-            params.animationListener.onAnimationEnd();
+        mDrawableNormal.setColor(params.getSolidColor());
+        mDrawableNormal.setStrokeColor(params.getStrokeColor());
+
+        if (params.getAnimationListener() != null) {
+            params.getAnimationListener().onAnimationEnd();
         }
     }
 
@@ -196,30 +180,32 @@ public class MorphingButton extends AppCompatButton {
         int cornerRadius = (int) resources.getDimension(R.dimen.mb_corner_radius_2);
         int blue = resources.getColor(R.color.mb_blue);
         int blueDark = resources.getColor(R.color.mb_blue_dark);
+        int unableColor = resources.getColor(R.color.btn_unable);
+        int[] colors = new int[]{blueDark, blueDark, unableColor, blue, blue};
+        int[][] states = new int[5][];
+        states[0] = new int[]{android.R.attr.state_pressed};
+        states[1] = new int[]{android.R.attr.state_focused};
+        states[2] = new int[]{-android.R.attr.state_enabled};
+        states[3] = new int[]{android.R.attr.state_enabled};
+        states[4] = new int[]{};
+        ColorStateList colorStateList = new ColorStateList(states, colors);
 
-        StateListDrawable background = new StateListDrawable();
-        mDrawableNormal = createDrawable(blue, cornerRadius, 0);
-        mDrawablePressed = createDrawable(blueDark, cornerRadius, 0);
-        mDrawableFocused = createDrawable(blueDark, cornerRadius, 0);
+        mDrawableNormal = createDrawable(colorStateList, colorStateList, cornerRadius, 0);
 
-        mSolidColor = blue;
-        mStrokeColor = blue;
+        mSolidColor = colorStateList;
+        mStrokeColor = colorStateList;
         mCornerRadius = (float) cornerRadius;
         mTextColor = getCurrentTextColor();
 
-        background.addState(new int[]{android.R.attr.state_pressed}, mDrawablePressed.getGradientDrawable());
-        background.addState(new int[]{android.R.attr.state_focused}, mDrawableFocused.getGradientDrawable());
-        background.addState(StateSet.WILD_CARD, mDrawableNormal.getGradientDrawable());
-
-        setBackgroundCompat(background);
+        setBackgroundCompat(mDrawableNormal.getGradientDrawable());
     }
 
-    private StrokeGradientDrawable createDrawable(int color, int cornerRadius, int strokeWidth) {
+    private StrokeGradientDrawable createDrawable(ColorStateList color, ColorStateList strokeColor, int cornerRadius, int strokeWidth) {
         StrokeGradientDrawable drawable = new StrokeGradientDrawable(new GradientDrawable());
         drawable.getGradientDrawable().setShape(GradientDrawable.RECTANGLE);
         drawable.setColor(color);
         drawable.setCornerRadius(cornerRadius);
-        drawable.setStrokeColor(color);
+        drawable.setStrokeColor(strokeColor);
         drawable.setStrokeWidth(strokeWidth);
 
         return drawable;
@@ -258,99 +244,4 @@ public class MorphingButton extends AppCompatButton {
         public int bottom;
     }
 
-    public static class Params {
-        @Nullable
-        private Float cornerRadius;
-        private int backgroundWidth;
-        private int width;
-        private int height;
-        private Integer textColor;
-        private Integer solidColor;
-        private Integer colorFocus;
-        private Integer colorPressed;
-        private int duration;
-        private int icon;
-        private int strokeWidth;
-        private int strokeColor;
-        private String text;
-        private MorphingAnimation.Listener animationListener;
-
-        private Params() {
-
-        }
-
-        public static Params create() {
-            return new Params();
-        }
-
-        public Params text(@NonNull String text) {
-            this.text = text;
-            return this;
-        }
-
-        public Params icon(@DrawableRes int icon) {
-            this.icon = icon;
-            return this;
-        }
-
-        public Params cornerRadius(int cornerRadius) {
-            this.cornerRadius = (float) cornerRadius;
-            return this;
-        }
-
-        public Params backgroundWidth(int backgroundWidth) {
-            this.backgroundWidth = backgroundWidth;
-            return this;
-        }
-
-        public Params width(int width) {
-            this.width = width;
-            return this;
-        }
-
-        public Params height(int height) {
-            this.height = height;
-            return this;
-        }
-
-        public Params solidColor(int color) {
-            this.solidColor = color;
-            return this;
-        }
-
-        public Params textColor(@ColorInt int color) {
-            this.textColor = color;
-            return this;
-        }
-
-        public Params colorPressed(int colorPressed) {
-            this.colorPressed = colorPressed;
-            return this;
-        }
-
-        public Params colorFocused(int colorFocus) {
-            this.colorFocus = colorFocus;
-            return this;
-        }
-
-        public Params duration(int duration) {
-            this.duration = duration;
-            return this;
-        }
-
-        public Params strokeWidth(int strokeWidth) {
-            this.strokeWidth = strokeWidth;
-            return this;
-        }
-
-        public Params strokeColor(int strokeColor) {
-            this.strokeColor = strokeColor;
-            return this;
-        }
-
-        public Params animationListener(MorphingAnimation.Listener animationListener) {
-            this.animationListener = animationListener;
-            return this;
-        }
-    }
 }

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+
+import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.impl.LinearProgressButton;
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.utils.ProgressGenerator;
@@ -65,7 +67,7 @@ public class Sample3Activity extends BaseActivity {
     }
 
     private void morphToSquare(final MorphingButton btnMorph, int duration) {
-        MorphingButton.Params square = MorphingButton.Params.create()
+        MorphingParams square = MorphingParams.create()
                 .duration(duration)
                 .cornerRadius(dimen(R.dimen.mb_corner_radius_2))
                 .width(dimen(R.dimen.mb_width_100))
@@ -77,7 +79,7 @@ public class Sample3Activity extends BaseActivity {
     }
 
     private void morphToSuccess(final MorphingButton btnMorph) {
-        MorphingButton.Params circle = MorphingButton.Params.create()
+        MorphingParams circle = MorphingParams.create()
                 .duration(integer(R.integer.mb_animation))
                 .cornerRadius(dimen(R.dimen.mb_height_56))
                 .width(dimen(R.dimen.mb_height_56))
@@ -89,7 +91,7 @@ public class Sample3Activity extends BaseActivity {
     }
 
     private void morphToFailure(final MorphingButton btnMorph, int duration) {
-        MorphingButton.Params circle = MorphingButton.Params.create()
+        MorphingParams circle = MorphingParams.create()
                 .duration(duration)
                 .cornerRadius(dimen(R.dimen.mb_height_56))
                 .width(dimen(R.dimen.mb_height_56))

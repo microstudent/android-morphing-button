@@ -7,7 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
-import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.CircularAnimatedDrawable;
 import com.dd.morphingbutton.impl.CircularProgressDrawable;
@@ -189,14 +189,14 @@ public class ProgressState implements ProgressTextState {
 
     @NonNull
     @Override
-    public MorphingButton.Params getParams() {
+    public MorphingParams getParams() {
         int offset = (mButton.getWidth() - mButton.getHeight()) / 2;
         int left = offset + mPaddingProgress;
         int right = mButton.getWidth() - offset - mPaddingProgress;
         int bottom = mButton.getHeight() - mPaddingProgress;
         int top = mPaddingProgress;
 
-        return MorphingButton.Params.create()
+        return MorphingParams.create()
                 .backgroundWidth(right - left)
                 .solidColor(mColorProgress)
                 .strokeColor(mColorIndicatorBackground)

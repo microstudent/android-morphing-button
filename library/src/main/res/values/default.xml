@@ -3,6 +3,7 @@
     <color name="mb_gray">#ffdedede</color>
     <color name="mb_blue">#ff0099cc</color>
     <color name="mb_blue_dark">#ff00719b</color>
+    <color name="btn_unable">#7d7d7d</color>
     <dimen name="mb_corner_radius_2">2dp</dimen>
     <dimen name="mc_cir_progress_button_stroke_width">3dp</dimen>
 

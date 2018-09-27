@@ -15,6 +15,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import com.dd.morphingbutton.MorphingAnimation;
 import com.dd.morphingbutton.MorphingButton;
+import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 
 public class IndeterminateProgressButton extends MorphingButton {
@@ -72,7 +73,7 @@ public class IndeterminateProgressButton extends MorphingButton {
     }
 
     @Override
-    public void morph(@NonNull Params params) {
+    public void morph(@NonNull MorphingParams params) {
         mIsRunning = false;
         super.morph(params);
     }
@@ -97,7 +98,7 @@ public class IndeterminateProgressButton extends MorphingButton {
         mColor3 = progressColor3;
         mColor4 = progressColor4;
 
-        Params longRoundedSquare = Params.create()
+        MorphingParams longRoundedSquare = MorphingParams.create()
                 .duration(duration)
                 .cornerRadius(mProgressCornerRadius)
                 .width(width)

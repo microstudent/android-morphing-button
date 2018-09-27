@@ -1,15 +1,17 @@
 package com.dd.morphingbutton;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 
 public class StrokeGradientDrawable {
 
     private int mStrokeWidth;
-    private int mStrokeColor;
+    private ColorStateList mStrokeColor;
 
     private GradientDrawable mGradientDrawable;
     private float mRadius;
-    private int mColor;
+    private ColorStateList mColor;
 
     public StrokeGradientDrawable(GradientDrawable drawable) {
         mGradientDrawable = drawable;
@@ -24,12 +26,16 @@ public class StrokeGradientDrawable {
         mGradientDrawable.setStroke(strokeWidth, getStrokeColor());
     }
 
-    public int getStrokeColor() {
+    public ColorStateList getStrokeColor() {
         return mStrokeColor;
     }
 
-    public void setStrokeColor(int strokeColor) {
+    public void setStrokeColor(ColorStateList strokeColor) {
         mStrokeColor = strokeColor;
+        mGradientDrawable.setStroke(getStrokeWidth(), strokeColor);
+    }
+
+    public void setStrokeColor(int strokeColor) {
         mGradientDrawable.setStroke(getStrokeWidth(), strokeColor);
     }
 
@@ -38,12 +44,16 @@ public class StrokeGradientDrawable {
         mGradientDrawable.setCornerRadius(radius);
     }
 
-    public void setColor(int color) {
+    public void setColor(ColorStateList color) {
         mColor = color;
         mGradientDrawable.setColor(color);
     }
 
-    public int getColor() {
+    public void setColor(int color) {
+        mGradientDrawable.setColor(color);
+    }
+
+    public ColorStateList getColor() {
         return mColor;
     }
 
