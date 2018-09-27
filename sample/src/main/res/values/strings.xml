@@ -12,4 +12,6 @@
         <item>RecyclerView</item>
     </string-array>
 
+    <string name="open">打开</string>
+    <string name="install">安装</string>
 </resources>

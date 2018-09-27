@@ -45,16 +45,16 @@ public class ProgressState implements ProgressTextState {
 
     public ProgressState(CircularProgressButton button) {
         mButton = button;
-        initAttrs();
     }
 
     protected int getColor(int id) {
         return mButton.getResources().getColor(id);
     }
 
-    private void initAttrs() {
-        TypedArray attr = mButton.getTypedArray();
-        if (attr == null) {
+
+    @Override
+    public void initAttrs(TypedArray typedArray) {
+        if (typedArray == null) {
             return;
         }
 
@@ -63,25 +63,23 @@ public class ProgressState implements ProgressTextState {
         int grey = getColor(R.color.mc_cir_progress_button_grey);
         int blank = getColor(R.color.mc_cir_progress_button_blank);
 
-        mProgressStrokeWidth = attr.getDimensionPixelSize(
+        mProgressStrokeWidth = typedArray.getDimensionPixelSize(
                 R.styleable.CircularProgressButton_mcCirButtonStrokeWidth,
                 (int) mButton.getContext().getResources().getDimension(
-                        R.dimen.mc_cir_progress_button_stroke_width));
-        mProgressText = attr
+                        R.dimen.mc_cir_progress_button_progress_stroke_width));
+        mProgressText = typedArray
                 .getString(R.styleable.CircularProgressButton_mcCirButtonTextProgress);
-        mColorProgress = attr.getColor(
+        mColorProgress = typedArray.getColor(
                 R.styleable.CircularProgressButton_mcCirButtonColorProgress, white);
-        mColorIndicator = attr.getColor(
+        mColorIndicator = typedArray.getColor(
                 R.styleable.CircularProgressButton_mcCirButtonColorIndicator, blue);
         mColorIndicatorBackground =
-                attr.getColor(
+                typedArray.getColor(
                         R.styleable.CircularProgressButton_mcCirButtonColorIndicatorBackground,
                         blank);
-        mPaddingProgress = attr.getDimensionPixelSize(
+        mPaddingProgress = typedArray.getDimensionPixelSize(
                 R.styleable.CircularProgressButton_mcCirButtonPaddingProgress, 0);
-        attr.recycle();
     }
-
 
     public void setProgress(int progress, boolean useAnim) {
         mProgress = progress;

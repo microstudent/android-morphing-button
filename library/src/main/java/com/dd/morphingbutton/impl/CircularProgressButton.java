@@ -25,8 +25,6 @@ import java.util.Map;
 
 public class CircularProgressButton extends MorphingButton implements IProgress {
 
-    private AttributeSet mAttrs;
-
     private StateEnum mCurrentStateEnum;
 
     public enum StateEnum {
@@ -67,22 +65,25 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
 
     public CircularProgressButton(Context context) {
         super(context);
-        init();
+        init(null);
     }
 
     public CircularProgressButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mAttrs = attrs;
-        init();
+        init(attrs);
     }
 
     public CircularProgressButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mAttrs = attrs;
-        init();
+        init(attrs);
     }
 
-    private void init() {
+    private void init(AttributeSet attrs) {
+        TypedArray typedArray = getTypedArray(attrs);
+        for (StateEnum stateEnum : StateEnum.values()) {
+            getState(stateEnum).initAttrs(typedArray);
+        }
+        typedArray.recycle();
     }
 
     public void setState(final StateEnum stateEnum, boolean withAnim) {
@@ -132,8 +133,11 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     }
 
 
-    public TypedArray getTypedArray() {
-        return getContext().obtainStyledAttributes(mAttrs, R.styleable.CircularProgressButton, 0, 0);
+    private TypedArray getTypedArray(AttributeSet attrs) {
+        if (attrs == null) {
+            return null;
+        }
+        return getContext().obtainStyledAttributes(attrs, R.styleable.CircularProgressButton);
     }
 
     @Override

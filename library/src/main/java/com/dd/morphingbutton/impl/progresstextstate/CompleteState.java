@@ -1,6 +1,5 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -9,8 +8,6 @@ import android.support.annotation.NonNull;
 import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.CircularProgressButton;
-
-import hugo.weaving.DebugLog;
 
 public class CompleteState implements ProgressTextState {
 
@@ -25,7 +22,6 @@ public class CompleteState implements ProgressTextState {
 
     public CompleteState(CircularProgressButton button) {
         mButton = button;
-        initAttrs(mButton.getContext());
     }
 
     @Override
@@ -36,39 +32,6 @@ public class CompleteState implements ProgressTextState {
     @Override
     public void stop() {
 
-    }
-
-
-    @DebugLog
-    private void initAttrs(Context context) {
-        TypedArray attr = mButton.getTypedArray();
-        if (attr == null) {
-            return;
-        }
-        mCompleteText = attr
-                .getString(R.styleable.CircularProgressButton_mcCirButtonTextComplete);
-        mIconComplete = attr.getResourceId(
-                R.styleable.CircularProgressButton_mcCirButtonIconComplete, 0);
-        mCornerRadius = attr.getDimension(
-                R.styleable.CircularProgressButton_mcCirButtonCornerRadius, 0);
-        int completeStateSelector = attr.getResourceId(
-                R.styleable.CircularProgressButton_mcCirButtonSelectorComplete,
-                R.color.mc_cir_progress_button_white);
-        mCompleteColorState = mButton.getResources().getColorStateList(completeStateSelector);
-        int completeStrokeColorSelector = attr.getResourceId(R.styleable.CircularProgressButton_mcCirButtonStrokeColorComplete, completeStateSelector);
-        mStrokeColorComplete = mButton.getResources().getColorStateList(completeStrokeColorSelector);
-
-        mStrokeWidth = attr.getDimensionPixelSize(
-                R.styleable.CircularProgressButton_mcCirButtonStrokeWidth,
-                (int) context.getResources().getDimension(
-                        R.dimen.mc_cir_progress_button_stroke_width));
-
-        mTextColorComplete = attr.getColorStateList(R.styleable.CircularProgressButton_mcCirButtonTextColorComplete);
-        if (mTextColorComplete == null) {
-            mTextColorComplete = mButton.getTextColors();
-        }
-
-        attr.recycle();
     }
 
     public void setColorState(ColorStateList completeColorState) {
@@ -87,13 +50,42 @@ public class CompleteState implements ProgressTextState {
                 .solidColor(mCompleteColorState)
                 .strokeWidth(mStrokeWidth)
                 .strokeColor(mStrokeColorComplete)
-                .textColor(mTextColorComplete.getDefaultColor())
+                .textColor(mTextColorComplete)
                 .text("完成");
     }
 
     @Override
     public void onDraw(@NonNull Canvas canvas) {
 
+    }
+
+    @Override
+    public void initAttrs(TypedArray typedArray) {
+        if (typedArray == null) {
+            return;
+        }
+        mCompleteText = typedArray
+                .getString(R.styleable.CircularProgressButton_mcCirButtonTextComplete);
+        mIconComplete = typedArray.getResourceId(
+                R.styleable.CircularProgressButton_mcCirButtonIconComplete, 0);
+        mCornerRadius = typedArray.getDimension(
+                R.styleable.CircularProgressButton_mcCirButtonCornerRadius, 0);
+        int completeStateSelector = typedArray.getResourceId(
+                R.styleable.CircularProgressButton_mcCirButtonSelectorComplete,
+                R.color.mc_cir_progress_button_white);
+        mCompleteColorState = mButton.getResources().getColorStateList(completeStateSelector);
+        int completeStrokeColorSelector = typedArray.getResourceId(R.styleable.CircularProgressButton_mcCirButtonStrokeColorComplete, completeStateSelector);
+        mStrokeColorComplete = mButton.getResources().getColorStateList(completeStrokeColorSelector);
+
+        mStrokeWidth = typedArray.getDimensionPixelSize(
+                R.styleable.CircularProgressButton_mcCirButtonStrokeWidth,
+                (int) mButton.getResources().getDimension(
+                        R.dimen.mc_cir_progress_button_progress_stroke_width));
+
+        mTextColorComplete = typedArray.getColorStateList(R.styleable.CircularProgressButton_mcCirButtonTextColorComplete);
+        if (mTextColorComplete == null) {
+            mTextColorComplete = mButton.getTextColors();
+        }
     }
 
     public void setTextColor(ColorStateList colorStateList) {

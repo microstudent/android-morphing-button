@@ -30,10 +30,11 @@
         android:includeFontPadding="false"
         android:elevation="0dp"
 
-        app:mcCirButtonStrokeWidth="4px"
+        app:mcCirButtonTextComplete="@string/open"
+        app:mcCirButtonTextIdle="@string/install"
+        app:mcCirButtonStrokeWidth="@dimen/cir_progress_button_normal_stroke_width"
         app:mcCirButtonCornerRadius="48dp"
         app:mcCirButtonColorProgress="@android:color/transparent"
-
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

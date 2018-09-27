@@ -1,6 +1,7 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -38,6 +39,11 @@ public class ErrorState implements ProgressTextState {
 
     @Override
     public void onDraw(@NonNull Canvas canvas) {
+
+    }
+
+    @Override
+    public void initAttrs(TypedArray typedArray) {
 
     }
 
