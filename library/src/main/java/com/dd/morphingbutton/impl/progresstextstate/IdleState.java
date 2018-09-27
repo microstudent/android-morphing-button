@@ -35,7 +35,7 @@ public class IdleState implements ProgressTextState {
                         R.dimen.mc_cir_progress_button_progress_stroke_width));
         mIdleText = typedArray.getString(R.styleable.CircularProgressButton_mcCirButtonTextIdle);
         mCornerRadius = typedArray.getDimension(
-                R.styleable.CircularProgressButton_mcCirButtonCornerRadius, 0);
+                R.styleable.CircularProgressButton_mcCirButtonCornerRadius, mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_corner_radius));
         int idleStateSelector = typedArray.getResourceId(
                 R.styleable.CircularProgressButton_mcCirButtonSelectorIdle,
                 R.color.mc_cir_progress_button_blue);
@@ -65,7 +65,7 @@ public class IdleState implements ProgressTextState {
                 .width(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_width))
                 .height(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_height))
                 .backgroundWidth(mButton.getWidth())
-                .cornerRadius(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_corner_radius))
+                .cornerRadius((int) mCornerRadius)
                 .text(mIdleText);
     }
 

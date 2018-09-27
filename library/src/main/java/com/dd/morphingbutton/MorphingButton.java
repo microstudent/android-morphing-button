@@ -1,5 +1,7 @@
 package com.dd.morphingbutton;
 
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -73,7 +75,9 @@ public class MorphingButton extends AppCompatButton {
             }
 
             mSolidColor = params.getSolidColor();
-            mCornerRadius = params.getCornerRadius();
+            if (params.getCornerRadius() != null) {
+                mCornerRadius = params.getCornerRadius();
+            }
             mStrokeWidth = params.getStrokeWidth();
             mStrokeColor = params.getStrokeColor();
             mTextColor = params.getTextColor();
@@ -114,6 +118,41 @@ public class MorphingButton extends AppCompatButton {
         mDrawableNormal.setColor(params.getSolidColor());
         mDrawableNormal.setStrokeColor(params.getStrokeColor());
         mDrawableNormal.setStrokeWidth(params.getStrokeWidth());
+
+
+        final int fromBackgroundWidth = mDrawableNormal.getGradientDrawable().getBounds().width();
+        final int toBackgroundWidth = params.getBackgroundWidth();
+
+        if (fromBackgroundWidth != toBackgroundWidth && toBackgroundWidth > 0) {
+            PropertyValuesHolder widthHolder = PropertyValuesHolder.ofInt("width", fromBackgroundWidth, toBackgroundWidth);
+
+            ValueAnimator backgroundSizeAnimator = ValueAnimator.ofPropertyValuesHolder(widthHolder);
+            backgroundSizeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int width = (Integer) animation.getAnimatedValue("width");
+
+                    int leftOffset;
+                    int rightOffset;
+                    int padding;
+
+                    if (fromBackgroundWidth > toBackgroundWidth) {
+                        leftOffset = (fromBackgroundWidth - width) / 2;
+                        rightOffset = fromBackgroundWidth - leftOffset;
+                        padding = 0;
+                    } else {
+                        leftOffset = (toBackgroundWidth - width) / 2;
+                        rightOffset = toBackgroundWidth - leftOffset;
+                        padding = 0;
+                    }
+
+                    mDrawableNormal.getGradientDrawable()
+                            .setBounds(leftOffset + padding, padding, rightOffset - padding - 1,
+                                    getHeight() - padding - 1);
+                }
+            });
+            backgroundSizeAnimator.start();
+        }
 
         if(params.getWidth() != 0 && params.getHeight() !=0) {
             ViewGroup.LayoutParams layoutParams = getLayoutParams();
@@ -206,8 +245,6 @@ public class MorphingButton extends AppCompatButton {
         drawable.getGradientDrawable().setShape(GradientDrawable.RECTANGLE);
         drawable.setColor(color);
         drawable.setCornerRadius(cornerRadius);
-        drawable.setStrokeColor(strokeColor);
-        drawable.setStrokeWidth(strokeWidth);
 
         return drawable;
     }

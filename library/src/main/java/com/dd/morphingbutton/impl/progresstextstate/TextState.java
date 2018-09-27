@@ -12,6 +12,9 @@ import com.dd.morphingbutton.impl.CircularProgressButton;
 public class TextState implements ProgressTextState {
 
     private final CircularProgressButton mButton;
+    private String mText;
+    // TODO: 18-9-28
+    private float mTextSize;
 
     public TextState(CircularProgressButton button) {
         mButton = button;
@@ -37,8 +40,7 @@ public class TextState implements ProgressTextState {
                 .solidColor(Color.TRANSPARENT)
                 .strokeWidth(0)
                 .textColor(Color.GRAY)
-                .duration(300)
-                .text("正在安装");
+                .text(mText);
     }
 
     @Override
@@ -49,5 +51,13 @@ public class TextState implements ProgressTextState {
     @Override
     public void initAttrs(TypedArray typedArray) {
 
+    }
+
+    public void setText(String text) {
+        mText = text;
+    }
+
+    public void setTextSize(float textSize) {
+        mTextSize = textSize;
     }
 }

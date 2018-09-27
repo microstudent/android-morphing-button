@@ -160,11 +160,13 @@ public class ProgressState implements ProgressTextState {
     }
 
     private void initProgressDrawable() {
-        int offset = (mButton.getWidth() - mButton.getHeight()) / 2;
-        int size = mButton.getHeight() - mPaddingProgress * 2;
-        mProgressDrawable = new CircularProgressDrawable(size, mProgressStrokeWidth, mColorIndicator);
-        int left = offset + mPaddingProgress;
-        mProgressDrawable.setBounds(left, mPaddingProgress, left, mPaddingProgress);
+        if (mProgressDrawable == null) {
+            int offset = (mButton.getWidth() - mButton.getHeight()) / 2;
+            int size = mButton.getHeight() - mPaddingProgress * 2;
+            mProgressDrawable = new CircularProgressDrawable(size, mProgressStrokeWidth, mColorIndicator);
+            int left = offset + mPaddingProgress;
+            mProgressDrawable.setBounds(left, mPaddingProgress, left, mPaddingProgress);
+        }
     }
 
     private void initAnimatedDrawable() {

@@ -23,8 +23,11 @@ import com.dd.morphingbutton.impl.progresstextstate.TextState;
 
 import java.util.Map;
 
+import hugo.weaving.DebugLog;
+
 public class CircularProgressButton extends MorphingButton implements IProgress {
 
+    private static final int ANIMATION_DURATION = 300;
     private StateEnum mCurrentStateEnum;
 
     public enum StateEnum {
@@ -86,13 +89,14 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         typedArray.recycle();
     }
 
+    @DebugLog
     public void setState(final StateEnum stateEnum, boolean withAnim) {
         if (mCurrentStateImpl != null) {
             mCurrentStateImpl.stop();
         }
         mCurrentStateImpl = getState(stateEnum);
         MorphingParams params = mCurrentStateImpl.getParams();
-        morph(withAnim ? params.duration(300) : params.duration(0));
+        morph(withAnim ? params.duration(ANIMATION_DURATION) : params.duration(0));
         mCurrentStateImpl.start();
         mCurrentStateEnum = stateEnum;
     }
@@ -118,6 +122,10 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
 
     private CompleteState getCompleteStateImpl() {
         return (CompleteState) getState(StateEnum.COMPLETE);
+    }
+
+    private TextState getTextStateImpl() {
+        return (TextState) getState(StateEnum.TEXT);
     }
 
     private IdleState getIdleStateImpl() {
@@ -316,6 +324,9 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
      * @param text
      */
     public void setStateText(StateEnum state, String text) {
+        if (state == null) {
+            return;
+        }
         switch (state) {
             case IDLE:
                 getIdleStateImpl().setText(text);
@@ -325,6 +336,9 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
                 break;
             case ERROR:
                 getErrorStateImpl().setText(text);
+                break;
+            case TEXT:
+                getTextStateImpl().setText(text);
                 break;
             default:
                 break;
@@ -361,4 +375,17 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     public void setIndicatorBackgroundColor(int backgroundColor) {
         getProgressStateImpl().setIndicatorBackgroundColor(backgroundColor);
     }
+
+
+    public void setNoBackgroundTextSize(float textSize) {
+        getTextStateImpl().setTextSize(textSize);
+    }
+
+
+    public void refreshState() {
+        if (getCurrentStateEnum() != null) {
+            setState(getCurrentStateEnum(), false);
+        }
+    }
+
 }
