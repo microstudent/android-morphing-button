@@ -1,6 +1,7 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
@@ -26,7 +27,11 @@ public class ErrorState implements ProgressTextState {
     @NonNull
     @Override
     public MorphingButton.Params getParams() {
-        return null;
+        return MorphingButton.Params.create()
+                .textColor(Color.WHITE)
+                .solidColor(Color.RED)
+                .strokeWidth(0)
+                .text("错误");
     }
 
     @Override

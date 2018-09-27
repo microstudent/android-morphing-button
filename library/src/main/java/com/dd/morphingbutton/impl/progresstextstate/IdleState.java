@@ -22,15 +22,11 @@ public class IdleState implements ProgressTextState {
     private float mCornerRadius;
     private ColorStateList mIdleColorState;
     private ColorStateList mStrokeColorIdle;
+    private ColorStateList mSoildColorStateList;
 
     public IdleState(CircularProgressButton button) {
         mButton = button;
         initAttrs(button.getContext());
-    }
-
-
-    protected TypedArray getTypedArray(Context context, AttributeSet attributeSet, int[] attr) {
-        return context.obtainStyledAttributes(attributeSet, attr, 0, 0);
     }
 
     @DebugLog
@@ -85,5 +81,9 @@ public class IdleState implements ProgressTextState {
     @Override
     public void onDraw(@NonNull Canvas canvas) {
 
+    }
+
+    public void setSoildColorStateList(ColorStateList soildColorStateList) {
+        mSoildColorStateList = soildColorStateList;
     }
 }

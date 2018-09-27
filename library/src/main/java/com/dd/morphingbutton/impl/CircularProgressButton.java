@@ -1,10 +1,13 @@
 package com.dd.morphingbutton.impl;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
+import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 
 import com.dd.morphingbutton.IProgress;
@@ -103,6 +106,9 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         return progressTextState;
     }
 
+    public ProgressState getProgressStateImpl() {
+        return ((ProgressState) getState(StateEnum.PROGRESS));
+    }
 
     public ProgressTextState getCurrentStateImpl() {
         return mCurrentStateImpl;
@@ -122,15 +128,35 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         super.morph(params);
     }
 
+
+    /**
+     * 设置进度，状态由进度决定，-1时为错误状态，1-99为进度状态，100为完成状态，0为停息状态
+     *
+     * @param progress
+     */
+    public void setProgress(int progress) {
+        setProgress(progress, true);
+    }
+
     @Override
     public void setProgress(int progress, boolean useAnim) {
         if (mCurrentStateEnum == StateEnum.PROGRESS) {
-            ((ProgressState) getState(StateEnum.PROGRESS)).setProgress(progress, useAnim);
+           getProgressStateImpl().setProgress(progress, useAnim);
         }
     }
 
+    /**
+     * 获取当前进度
+     *
+     * @return
+     */
+    public int getProgress() {
+        return getProgressStateImpl().getProgress();
+    }
+
+
     public void setShowCenterIcon(boolean showCenterIcon) {
-        ((ProgressState) getState(StateEnum.PROGRESS)).setShowCenterIcon(showCenterIcon);
+        getProgressStateImpl().setShowCenterIcon(showCenterIcon);
     }
 
     @Override
@@ -140,4 +166,119 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
             mCurrentStateImpl.onDraw(canvas);
         }
     }
+
+    /**
+     * 获取设置进度状态时，进度条样式
+     *
+     * @return
+     */
+    public boolean isIndeterminateProgressMode() {
+        return getProgressStateImpl().isIndeterminateProgressMode();
+    }
+
+    /**
+     * 设置进度模式，true为无进度模式
+     *
+     * @param indeterminateProgressMode
+     */
+    public void setIndeterminateProgressMode(boolean indeterminateProgressMode) {
+        getProgressStateImpl().setIndeterminateProgressMode(indeterminateProgressMode);
+    }
+
+    /**
+     * 获取要在button上显示的字符串宽度
+     *
+     * @param paint
+     * @param str
+     * @return
+     */
+    public int getTextWidth(Paint paint, String str) {
+        TransformationMethod transformation = getTransformationMethod();
+        if (transformation != null) {
+            str = transformation.getTransformation(str, this).toString();
+        }
+        return (int) paint.measureText(str);
+    }
+
+//    /**
+//     * 设置背景颜色
+//     *
+//     * @param color
+//     */
+//    @Override
+//    public void setBackgroundColor(int color) {
+//        mBackground.getGradientDrawable().setColor(color);
+//    }
+
+    /**
+     * 设置描边颜色
+     *
+     * @param color
+     */
+    public void setStrokeColor(int color) {
+        //TODO fixme
+//        mBackground.setStrokeColor(color);
+    }
+
+    /**
+     * 设置进度值，只在进度状态下有效
+     *
+     * @param progress 进度值
+     */
+    public void setProgressForState(int progress, boolean useAnim) {
+        if (mCurrentStateEnum == StateEnum.PROGRESS) {
+            getProgressStateImpl().setProgress(progress, useAnim);
+        }
+    }
+
+//
+//    /**
+//     * 设置指定状态的背景颜色，即不同状态下的按钮背景颜色以及描边颜色
+//     *
+//     * @param state                    目标状态
+//     * @param backgroundColorStateList 按钮背景颜色
+//     * @param strokeColorStateList     描边颜色
+//     */
+//    public void setStateColorSelector(StateEnum state, ColorStateList backgroundColorStateList, ColorStateList strokeColorStateList) {
+//        if (backgroundColorStateList == null || strokeColorStateList == null) {
+//            return;
+//        }
+//        switch (state) {
+//            case IDLE:
+//                IdleState idleState = getIdleStateImpl();
+//                idleState.setSoildColorStateList(backgroundColorStateList);
+//                idleState.setSt
+//                mStrokeColorIdle = strokeColorStateList;
+//                break;
+//            case COMPLETE:
+//                mCompleteColorState = backgroundColorStateList;
+//                mStrokeColorComplete = strokeColorStateList;
+//                break;
+//            case ERROR:
+//                mErrorColorState = backgroundColorStateList;
+//                mStrokeColorError = strokeColorStateList;
+//                break;
+//            default:
+//                break;
+//        }
+//        mBackground = null;
+//        mIdleStateDrawable = null;
+//        mProgressStateDrawable = null;
+//        mCompleteStateDrawable = null;
+//        mErrorStateDrawable = null;
+//        initIdleStateDrawable();
+//        initProgressStateDrawable();
+//        initErrorStateDrawable();
+//        initCompleteStateDrawable();
+//        if (mState == state) {
+//            setBackgroundFromState(state);
+//        }
+//        changeBackground(mState, true);
+//        drawableStateChanged();
+//    }
+
+    private IdleState getIdleStateImpl() {
+        return (IdleState) getState(StateEnum.IDLE);
+    }
+
 }

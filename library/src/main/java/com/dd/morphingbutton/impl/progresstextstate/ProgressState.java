@@ -266,4 +266,7 @@ public class ProgressState implements ProgressTextState {
         mNeedInvalidateCenterIcon = true;
     }
 
+    public int getProgress() {
+        return mProgress;
+    }
 }
