@@ -15,8 +15,7 @@ import com.dd.morphingbutton.impl.CircularProgressButton;
 
 public class ProgressState implements ProgressTextState {
 
-    //TODO fixme
-    public static final int MAX_PROGRESS = 101;
+    public static final int MAX_PROGRESS = 100;
     public static final int MIN_PROGRESS = 0;
     public static final int IDLE_STATE_PROGRESS = 0;
     public static final int ERROR_STATE_PROGRESS = -1;
@@ -152,7 +151,7 @@ public class ProgressState implements ProgressTextState {
         mDefaultDrawable = mButton.getBackground();
         if (mIndeterminateProgressMode) {
             initAnimatedDrawable();
-            mButton.setBackgroundDrawable(mAnimatedDrawable);
+            mAnimatedDrawable.setCallback(mButton);
             mAnimatedDrawable.start();
             mAnimatedDrawable.setAllowLoading(true);
         } else {
@@ -225,12 +224,12 @@ public class ProgressState implements ProgressTextState {
     }
 
     private void drawIndeterminateProgress(Canvas canvas) {
-//        if (mAnimatedDrawable == null) {
-//            initAnimatedDrawable();
-//        } else {
-//            mAnimatedDrawable.setAllowLoading(true);
-//            mAnimatedDrawable.draw(canvas);
-//        }
+        if (mAnimatedDrawable == null) {
+            initAnimatedDrawable();
+        } else {
+            mAnimatedDrawable.setAllowLoading(true);
+            mAnimatedDrawable.draw(canvas);
+        }
     }
 
 

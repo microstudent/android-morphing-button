@@ -10,6 +10,8 @@ import java.util.List;
 
 public class MorphingAnimation {
 
+    private AnimatorSet mAnimatorSet;
+
     public interface Listener {
         void onAnimationEnd();
     }
@@ -123,6 +125,14 @@ public class MorphingAnimation {
         mParams = params;
     }
 
+
+    public void cancel() {
+        if (mAnimatorSet != null) {
+            mAnimatorSet.end();
+            mAnimatorSet.removeAllListeners();
+        }
+    }
+
     public void start() {
         List<Animator> animators = new ArrayList<>();
 
@@ -207,11 +217,11 @@ public class MorphingAnimation {
             animators.add(backgroundSizeAnimator);
         }
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.setDuration(mParams.duration);
+        mAnimatorSet = new AnimatorSet();
+        mAnimatorSet.setDuration(mParams.duration);
 
-        animatorSet.playTogether(animators);
-        animatorSet.addListener(new AnimatorListenerAdapter() {
+        mAnimatorSet.playTogether(animators);
+        mAnimatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (mParams.animationListener != null) {
@@ -219,7 +229,7 @@ public class MorphingAnimation {
                 }
             }
         });
-        animatorSet.start();
+        mAnimatorSet.start();
     }
 
 }

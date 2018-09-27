@@ -51,7 +51,8 @@ public class CompleteState implements ProgressTextState {
                 .strokeWidth(mStrokeWidth)
                 .strokeColor(mStrokeColorComplete)
                 .textColor(mTextColorComplete)
-                .text("完成");
+                .cornerRadius((int) mCornerRadius)
+                .text(mCompleteText);
     }
 
     @Override
@@ -93,6 +94,7 @@ public class CompleteState implements ProgressTextState {
     }
 
     public void setText(String text) {
-
+        mCompleteText = text;
     }
+
 }

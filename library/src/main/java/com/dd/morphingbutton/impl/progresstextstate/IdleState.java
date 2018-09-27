@@ -66,7 +66,7 @@ public class IdleState implements ProgressTextState {
                 .height(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_height))
                 .backgroundWidth(mButton.getWidth())
                 .cornerRadius(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_corner_radius))
-                .text("安装");
+                .text(mIdleText);
     }
 
     @Override
@@ -87,6 +87,6 @@ public class IdleState implements ProgressTextState {
     }
 
     public void setText(String text) {
-
+        mIdleText = text;
     }
 }

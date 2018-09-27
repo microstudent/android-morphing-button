@@ -33,6 +33,7 @@ public class MorphingButton extends AppCompatButton {
     protected boolean mAnimationInProgress;
 
     private StrokeGradientDrawable mDrawableNormal;
+    private MorphingAnimation mMorphingAnimation;
 
     public MorphingButton(Context context) {
         super(context);
@@ -102,8 +103,8 @@ public class MorphingButton extends AppCompatButton {
                     }
                 });
 
-        MorphingAnimation animation = new MorphingAnimation(animationParams);
-        animation.start();
+        mMorphingAnimation = new MorphingAnimation(animationParams);
+        mMorphingAnimation.start();
     }
 
     private void morphWithoutAnimation(@NonNull MorphingParams params) {
@@ -242,6 +243,15 @@ public class MorphingButton extends AppCompatButton {
         public int right;
         public int top;
         public int bottom;
+    }
+
+    /**
+     * 取消动画,在列表中，为防止状态错乱，应该首先取消动画状态
+     */
+    public void cancelAllAnimation() {
+        if (mMorphingAnimation != null) {
+            mMorphingAnimation.cancel();
+        }
     }
 
 }
