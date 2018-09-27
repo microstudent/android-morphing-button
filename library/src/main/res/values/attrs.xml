@@ -2,10 +2,9 @@
 <resources>
     <declare-styleable name="CircularProgressButton">
         <attr name="mcCirButtonSelectorIdle" format="reference" />
-        <attr name="mcCirButtonCompleteColor" format="color" />
-        <attr name="mcCirButtonStrokeColorComplete" format="color" />
+        <attr name="mcCirButtonSelectorComplete" format="reference" />
+        <attr name="mcCirButtonStrokeColorComplete" format="reference" />
         <attr name="mcCirButtonTextColorComplete" format="reference|color" />
-
         <attr name="mcCirButtonSelectorError" format="reference" />
         <attr name="mcCirButtonTextComplete" format="string" />
         <attr name="mcCirButtonTextIdle" format="string" />

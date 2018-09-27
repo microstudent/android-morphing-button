@@ -19,8 +19,8 @@ public class CompleteState implements ProgressTextState {
     private int mIconComplete;
     private float mCornerRadius;
     private ColorStateList mTextColorComplete;
-    private int mCompleteColor;
-    private int mCompleteStrokeColor;
+    private ColorStateList mCompleteColorState;
+    private ColorStateList mStrokeColorComplete;
     private int mStrokeWidth;
 
     public CompleteState(CircularProgressButton button) {
@@ -51,11 +51,12 @@ public class CompleteState implements ProgressTextState {
                 R.styleable.CircularProgressButton_mcCirButtonIconComplete, 0);
         mCornerRadius = attr.getDimension(
                 R.styleable.CircularProgressButton_mcCirButtonCornerRadius, 0);
-        mCompleteColor = attr.getColor(
-                R.styleable.CircularProgressButton_mcCirButtonCompleteColor,
-                context.getResources().getColor(R.color.mc_cir_progress_button_white));
-        mCompleteStrokeColor = attr.getColor(R.styleable.CircularProgressButton_mcCirButtonStrokeColorComplete,
-                context.getResources().getColor(R.color.mc_cir_progress_button_green));
+        int completeStateSelector = attr.getResourceId(
+                R.styleable.CircularProgressButton_mcCirButtonSelectorComplete,
+                R.color.mc_cir_progress_button_green);
+        mCompleteColorState = mButton.getResources().getColorStateList(completeStateSelector);
+        int completeStrokeColorSelector = attr.getResourceId(R.styleable.CircularProgressButton_mcCirButtonStrokeColorComplete, completeStateSelector);
+        mStrokeColorComplete = mButton.getResources().getColorStateList(completeStrokeColorSelector);
 
         mStrokeWidth = attr.getDimensionPixelSize(
                 R.styleable.CircularProgressButton_mcCirButtonStrokeWidth,
@@ -70,14 +71,22 @@ public class CompleteState implements ProgressTextState {
         attr.recycle();
     }
 
+    public void setColorState(ColorStateList completeColorState) {
+        mCompleteColorState = completeColorState;
+    }
+
+    public void setStrokeColor(ColorStateList strokeColorComplete) {
+        mStrokeColorComplete = strokeColorComplete;
+    }
+
     @NonNull
     @Override
     public MorphingParams getParams() {
         return MorphingParams.create()
                 .backgroundWidth(mButton.getWidth())
-                .solidColor(mCompleteColor)
+                .solidColor(mCompleteColorState)
                 .strokeWidth(mStrokeWidth)
-                .strokeColor(mCompleteStrokeColor)
+                .strokeColor(mStrokeColorComplete)
                 .textColor(mTextColorComplete.getDefaultColor())
                 .text("完成");
     }

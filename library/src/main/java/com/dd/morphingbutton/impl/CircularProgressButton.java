@@ -1,6 +1,7 @@
 package com.dd.morphingbutton.impl;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -231,51 +232,42 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         }
     }
 
-//
-//    /**
-//     * 设置指定状态的背景颜色，即不同状态下的按钮背景颜色以及描边颜色
-//     *
-//     * @param state                    目标状态
-//     * @param backgroundColorStateList 按钮背景颜色
-//     * @param strokeColorStateList     描边颜色
-//     */
-//    public void setStateColorSelector(StateEnum state, ColorStateList backgroundColorStateList, ColorStateList strokeColorStateList) {
-//        if (backgroundColorStateList == null || strokeColorStateList == null) {
-//            return;
-//        }
-//        switch (state) {
-//            case IDLE:
-//                IdleState idleState = getIdleStateImpl();
-//                idleState.setSoildColorStateList(backgroundColorStateList);
-//                idleState.setSt
-//                mStrokeColorIdle = strokeColorStateList;
-//                break;
-//            case COMPLETE:
-//                mCompleteColorState = backgroundColorStateList;
-//                mStrokeColorComplete = strokeColorStateList;
-//                break;
-//            case ERROR:
+
+    /**
+     * 设置指定状态的背景颜色，即不同状态下的按钮背景颜色以及描边颜色
+     *
+     * @param state                    目标状态
+     * @param backgroundColorStateList 按钮背景颜色
+     * @param strokeColorStateList     描边颜色
+     */
+    public void setStateColorSelector(StateEnum state, ColorStateList backgroundColorStateList, ColorStateList strokeColorStateList) {
+        if (backgroundColorStateList == null || strokeColorStateList == null) {
+            return;
+        }
+        switch (state) {
+            case IDLE:
+                IdleState idleState = getIdleStateImpl();
+                idleState.setColorState(backgroundColorStateList);
+                idleState.setStrokeColorIdle(strokeColorStateList);
+                break;
+            case COMPLETE:
+                CompleteState completeState = getCompleteStateImpl();
+                completeState.setColorState(backgroundColorStateList);
+                completeState.setStrokeColor(strokeColorStateList);
+                break;
+            case ERROR:
 //                mErrorColorState = backgroundColorStateList;
 //                mStrokeColorError = strokeColorStateList;
-//                break;
-//            default:
-//                break;
-//        }
-//        mBackground = null;
-//        mIdleStateDrawable = null;
-//        mProgressStateDrawable = null;
-//        mCompleteStateDrawable = null;
-//        mErrorStateDrawable = null;
-//        initIdleStateDrawable();
-//        initProgressStateDrawable();
-//        initErrorStateDrawable();
-//        initCompleteStateDrawable();
-//        if (mState == state) {
-//            setBackgroundFromState(state);
-//        }
-//        changeBackground(mState, true);
-//        drawableStateChanged();
-//    }
+                break;
+            default:
+                break;
+        }
+        drawableStateChanged();
+    }
+
+    private CompleteState getCompleteStateImpl() {
+        return (CompleteState) getState(StateEnum.COMPLETE);
+    }
 
     private IdleState getIdleStateImpl() {
         return (IdleState) getState(StateEnum.IDLE);
