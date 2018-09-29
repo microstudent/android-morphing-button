@@ -4,12 +4,13 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.CircularProgressButton;
 
-public class TextState implements ProgressTextState {
+public class TextState extends AbsProgressTextState {
 
     private final CircularProgressButton mButton;
     private String mText;
@@ -54,10 +55,23 @@ public class TextState implements ProgressTextState {
     }
 
     public void setText(String text) {
+        if (TextUtils.equals(text, mText)) {
+            return;
+        }
         mText = text;
+        makeDirty(true);
     }
 
     public void setTextSize(float textSize) {
+        if (textSize == mTextSize) {
+            return;
+        }
         mTextSize = textSize;
+        makeDirty(true);
+    }
+
+    @Override
+    public String toString() {
+        return "TextState: " + "mText = " + mText + "mTextSize = " + mTextSize;
     }
 }

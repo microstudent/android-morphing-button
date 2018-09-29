@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.impl.CircularProgressButton;
 
-public class ErrorState implements ProgressTextState {
+public class ErrorState extends AbsProgressTextState {
 
     private ColorStateList mTextColor;
 
@@ -45,6 +45,11 @@ public class ErrorState implements ProgressTextState {
     @Override
     public void initAttrs(TypedArray typedArray) {
 
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
     }
 
     public void setTextColor(ColorStateList colorStateList) {

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.dd.morphingbutton.IProgress;
 import com.dd.morphingbutton.MorphingButton;
@@ -18,7 +19,7 @@ import com.dd.morphingbutton.impl.progresstextstate.CompleteState;
 import com.dd.morphingbutton.impl.progresstextstate.ErrorState;
 import com.dd.morphingbutton.impl.progresstextstate.IdleState;
 import com.dd.morphingbutton.impl.progresstextstate.ProgressState;
-import com.dd.morphingbutton.impl.progresstextstate.ProgressTextState;
+import com.dd.morphingbutton.impl.progresstextstate.AbsProgressTextState;
 import com.dd.morphingbutton.impl.progresstextstate.TextState;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ import java.util.Map;
 import hugo.weaving.DebugLog;
 
 public class CircularProgressButton extends MorphingButton implements IProgress {
-
+    private static final String TAG = "CircularProgressButton";
     private static final int ANIMATION_DURATION = 300;
     private StateEnum mCurrentStateEnum;
 
@@ -37,8 +38,8 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         COMPLETE,
         ERROR,
         TEXT;
-        private ProgressTextState createStateInstance(CircularProgressButton button) {
-            ProgressTextState state = null;
+        private AbsProgressTextState createStateInstance(CircularProgressButton button) {
+            AbsProgressTextState state = null;
             switch (this) {
                 case IDLE:
                     state = new IdleState(button);
@@ -62,9 +63,9 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         }
     }
 
-    private Map<StateEnum, ProgressTextState> mStateMap = new ArrayMap<>(5);
+    private Map<StateEnum, AbsProgressTextState> mStateMap = new ArrayMap<>(5);
 
-    private ProgressTextState mCurrentStateImpl;
+    private AbsProgressTextState mCurrentStateImpl;
 
     public CircularProgressButton(Context context) {
         super(context);
@@ -91,18 +92,33 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
 
     @DebugLog
     public void setState(final StateEnum stateEnum, boolean withAnim) {
+        if (mCurrentStateEnum == stateEnum) {
+            if (mCurrentStateImpl != null && mCurrentStateImpl.isDirty()) {
+                Log.e("LAZY", "refreshState!!! setState as " + stateEnum + ", this = " + this.toString());
+                //需要刷新状态
+                refreshState();
+            }
+            Log.e("LAZY", "setState fail!!! setState as " + stateEnum + ", this = " + this.toString());
+            return;
+        }
+        Log.e("LAZY", "setState as " + stateEnum + ", this = " + this.toString());
+        realSetState(stateEnum, withAnim);
+    }
+
+    private void realSetState(StateEnum stateEnum, boolean withAnim) {
         if (mCurrentStateImpl != null) {
             mCurrentStateImpl.stop();
         }
         mCurrentStateImpl = getState(stateEnum);
         MorphingParams params = mCurrentStateImpl.getParams();
+        Log.e(TAG, mCurrentStateImpl.toString());
         morph(withAnim ? params.duration(ANIMATION_DURATION) : params.duration(0));
         mCurrentStateImpl.start();
         mCurrentStateEnum = stateEnum;
     }
 
-    private ProgressTextState getState(StateEnum state) {
-        ProgressTextState progressTextState;
+    private AbsProgressTextState getState(StateEnum state) {
+        AbsProgressTextState progressTextState;
         if (mStateMap.get(state) == null) {
             progressTextState = state.createStateInstance(this);
             mStateMap.put(state, progressTextState);
@@ -132,7 +148,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         return (IdleState) getState(StateEnum.IDLE);
     }
 
-    public ProgressTextState getCurrentStateImpl() {
+    public AbsProgressTextState getCurrentStateImpl() {
         return mCurrentStateImpl;
     }
 
@@ -147,12 +163,6 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         }
         return getContext().obtainStyledAttributes(attrs, R.styleable.CircularProgressButton);
     }
-
-    @Override
-    public void morph(@NonNull MorphingParams params) {
-        super.morph(params);
-    }
-
 
     /**
      * 设置进度，状态由进度决定，-1时为错误状态，1-99为进度状态，100为完成状态，0为停息状态
@@ -382,9 +392,11 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     }
 
 
-    public void refreshState() {
-        if (getCurrentStateEnum() != null) {
-            setState(getCurrentStateEnum(), false);
+    private void refreshState() {
+        AbsProgressTextState stateImpl = getCurrentStateImpl();
+        if (stateImpl != null && stateImpl.isDirty()) {
+            cancelAllAnimation();
+            realSetState(getCurrentStateEnum(), false);
         }
     }
 

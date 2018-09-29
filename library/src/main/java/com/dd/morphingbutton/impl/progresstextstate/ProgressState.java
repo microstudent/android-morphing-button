@@ -13,7 +13,7 @@ import com.dd.morphingbutton.impl.CircularAnimatedDrawable;
 import com.dd.morphingbutton.impl.CircularProgressDrawable;
 import com.dd.morphingbutton.impl.CircularProgressButton;
 
-public class ProgressState implements ProgressTextState {
+public class ProgressState extends AbsProgressTextState {
 
     public static final int MAX_PROGRESS = 100;
     public static final int MIN_PROGRESS = 0;
@@ -80,6 +80,11 @@ public class ProgressState implements ProgressTextState {
                 R.styleable.CircularProgressButton_mcCirButtonPaddingProgress, 0);
     }
 
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
+
     public void setProgress(int progress, boolean useAnim) {
         mProgress = progress;
         isUseTransitionAnim = useAnim;
@@ -112,14 +117,6 @@ public class ProgressState implements ProgressTextState {
                 mButton.setState(CircularProgressButton.StateEnum.ERROR, true);
             } else if (currentState == CircularProgressButton.StateEnum.IDLE) {
                 mButton.setState(CircularProgressButton.StateEnum.ERROR, true);
-            }
-        } else if (mProgress == IDLE_STATE_PROGRESS) {
-            if (currentState == CircularProgressButton.StateEnum.COMPLETE) {
-                mButton.setState(CircularProgressButton.StateEnum.IDLE, true);
-            } else if (currentState == CircularProgressButton.StateEnum.PROGRESS) {
-                mButton.setState(CircularProgressButton.StateEnum.IDLE, true);
-            } else if (currentState == CircularProgressButton.StateEnum.ERROR) {
-                mButton.setState(CircularProgressButton.StateEnum.IDLE, true);
             }
         }
     }

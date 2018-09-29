@@ -9,7 +9,7 @@ import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.CircularProgressButton;
 
-public class CompleteState implements ProgressTextState {
+public class CompleteState extends AbsProgressTextState {
 
     private final CircularProgressButton mButton;
     private String mCompleteText;
@@ -87,6 +87,11 @@ public class CompleteState implements ProgressTextState {
         if (mTextColorComplete == null) {
             mTextColorComplete = mButton.getTextColors();
         }
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
     }
 
     public void setTextColor(ColorStateList colorStateList) {

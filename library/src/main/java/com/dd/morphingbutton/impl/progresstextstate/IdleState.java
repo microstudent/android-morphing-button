@@ -10,7 +10,7 @@ import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.CircularProgressButton;
 
-public class IdleState implements ProgressTextState {
+public class IdleState extends AbsProgressTextState {
 
     private final CircularProgressButton mButton;
     private int mStrokeWidth;
@@ -42,6 +42,11 @@ public class IdleState implements ProgressTextState {
         mIdleColorState = mButton.getResources().getColorStateList(idleStateSelector);
         int idleStrokeColorSelector = typedArray.getResourceId(R.styleable.CircularProgressButton_mcCirButtonStrokeColorIdle, idleStateSelector);
         mStrokeColorIdle = mButton.getResources().getColorStateList(idleStrokeColorSelector);
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
     }
 
     @Override

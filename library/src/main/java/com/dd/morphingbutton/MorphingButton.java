@@ -289,6 +289,7 @@ public class MorphingButton extends AppCompatButton {
         if (mMorphingAnimation != null) {
             mMorphingAnimation.cancel();
         }
+        mAnimationInProgress = false;
     }
 
 }
