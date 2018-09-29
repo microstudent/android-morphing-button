@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
 import com.dd.morphingbutton.impl.CircularProgressButton;
+import com.dd.morphingbutton.utils.DensityUtil;
 
 public class TextState extends AbsProgressTextState {
 
@@ -45,13 +46,8 @@ public class TextState extends AbsProgressTextState {
     }
 
     @Override
-    public void onDraw(@NonNull Canvas canvas) {
-
-    }
-
-    @Override
     public void initAttrs(TypedArray typedArray) {
-
+        mTextSize = DensityUtil.px2sp(mButton.getContext(), mButton.getTextSize());
     }
 
     public void setText(String text) {
@@ -62,11 +58,11 @@ public class TextState extends AbsProgressTextState {
         makeDirty(true);
     }
 
-    public void setTextSize(float textSize) {
-        if (textSize == mTextSize) {
+    public void setTextSize(float textSizeInSp) {
+        if (textSizeInSp == mTextSize) {
             return;
         }
-        mTextSize = textSize;
+        mTextSize = textSizeInSp;
         makeDirty(true);
     }
 

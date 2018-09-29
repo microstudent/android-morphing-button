@@ -3,7 +3,9 @@ package com.dd.morphingbutton;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.Keep;
 
+@Keep
 public class StrokeGradientDrawable {
 
     private int mStrokeWidth;

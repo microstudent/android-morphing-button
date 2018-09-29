@@ -41,6 +41,7 @@ public class ProgressState extends AbsProgressTextState {
     private boolean isUseTransitionAnim;
     private ValueAnimator mProgressAnimation;
     private boolean mShouldShowCenterIcon;
+    private float mCornerRadius;
 
     public ProgressState(CircularProgressButton button) {
         mButton = button;
@@ -78,6 +79,8 @@ public class ProgressState extends AbsProgressTextState {
                         blank);
         mPaddingProgress = typedArray.getDimensionPixelSize(
                 R.styleable.CircularProgressButton_mcCirButtonPaddingProgress, 0);
+        mCornerRadius = typedArray.getDimension(
+                R.styleable.CircularProgressButton_mcCirButtonCornerRadius, mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_corner_radius));
     }
 
     @Override
@@ -195,6 +198,7 @@ public class ProgressState extends AbsProgressTextState {
         return MorphingParams.create()
                 .backgroundWidth(right - left)
                 .solidColor(mColorProgress)
+                .cornerRadius((int) mCornerRadius)
                 .strokeColor(mColorIndicatorBackground)
                 .strokeWidth(mProgressStrokeWidth)
                 .text(mProgressText);
@@ -210,6 +214,7 @@ public class ProgressState extends AbsProgressTextState {
     }
 
     private void drawProgress(Canvas canvas) {
+        initProgressDrawable();
         if (mNeedInvalidateCenterIcon) {
             mNeedInvalidateCenterIcon = false;
             mProgressDrawable.setShowCenterIcon(mShouldShowCenterIcon);

@@ -31,6 +31,8 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     private static final int ANIMATION_DURATION = 300;
     private StateEnum mCurrentStateEnum;
 
+    private Runnable mRealSetStateRunnable;
+
     public enum StateEnum {
         /***/
         PROGRESS,
@@ -91,18 +93,30 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     }
 
     @DebugLog
-    public void setState(final StateEnum stateEnum, boolean withAnim) {
+    public void setState(final StateEnum stateEnum, final boolean withAnim) {
         if (mCurrentStateEnum == stateEnum) {
             if (mCurrentStateImpl != null && mCurrentStateImpl.isDirty()) {
                 Log.e("LAZY", "refreshState!!! setState as " + stateEnum + ", this = " + this.toString());
                 //需要刷新状态
                 refreshState();
             }
-            Log.e("LAZY", "setState fail!!! setState as " + stateEnum + ", this = " + this.toString());
             return;
         }
-        Log.e("LAZY", "setState as " + stateEnum + ", this = " + this.toString());
-        realSetState(stateEnum, withAnim);
+        if (!isLaidOut()) {
+            //等待layout完成再进行setState
+            if (mRealSetStateRunnable != null) {
+                removeCallbacks(mRealSetStateRunnable);
+            }
+            mRealSetStateRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    realSetState(stateEnum, withAnim);
+                }
+            };
+            post(mRealSetStateRunnable);
+        } else {
+            realSetState(stateEnum, withAnim);
+        }
     }
 
     private void realSetState(StateEnum stateEnum, boolean withAnim) {

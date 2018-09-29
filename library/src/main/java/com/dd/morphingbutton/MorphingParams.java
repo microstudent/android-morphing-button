@@ -32,6 +32,8 @@ public class MorphingParams {
     private Integer colorPressed;
     private ColorStateList solidColor;
 
+    private Float textSize;
+
 
     private MorphingParams() {
 
@@ -96,6 +98,10 @@ public class MorphingParams {
         return this;
     }
 
+    public MorphingParams textSize(float textSize) {
+        this.textSize = textSize;
+        return this;
+    }
 
     public MorphingParams duration(int duration) {
         this.duration = duration;
@@ -144,6 +150,10 @@ public class MorphingParams {
 
     public int getHeight() {
         return height;
+    }
+
+    public Float getTextSize() {
+        return textSize;
     }
 
     public ColorStateList getTextColor() {

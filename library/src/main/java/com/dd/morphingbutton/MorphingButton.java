@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,8 +97,8 @@ public class MorphingButton extends AppCompatButton {
                 .cornerRadius(mCornerRadius == null ? 0 : mCornerRadius, params.getCornerRadius())
                 .strokeWidth(mStrokeWidth, params.getStrokeWidth())
                 .strokeColor(mStrokeColor == null ? Color.TRANSPARENT : mStrokeColor.getDefaultColor(), params.getStrokeColor().getDefaultColor())
-                .height(getHeight(), params.getHeight())
-                .width(getWidth(), params.getWidth())
+                .height(mHeight, params.getHeight())
+                .width(mWidth, params.getWidth())
                 .backgroundWidth(getBackground().getBounds().width(), params.getBackgroundWidth())
                 .duration(params.getDuration())
                 .listener(new MorphingAnimation.Listener() {
@@ -173,6 +174,10 @@ public class MorphingButton extends AppCompatButton {
 
     private void finalizeMorphing(@NonNull MorphingParams params) {
         mAnimationInProgress = false;
+
+        if (params.getTextSize() != null) {
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, params.getTextSize());
+        }
 
         if (params.getIcon() != 0 && params.getText() != null) {
             setIconLeft(params.getIcon());
