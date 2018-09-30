@@ -13,11 +13,15 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
+import android.text.StaticLayout;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import hugo.weaving.DebugLog;
 
 public class MorphingButton extends AppCompatButton {
 
@@ -66,6 +70,7 @@ public class MorphingButton extends AppCompatButton {
         return mDrawableNormal;
     }
 
+    @DebugLog
     public void morph(@NonNull MorphingParams params) {
         if (!mAnimationInProgress) {
 
@@ -112,6 +117,7 @@ public class MorphingButton extends AppCompatButton {
         mMorphingAnimation.start();
     }
 
+    @DebugLog
     private void morphWithoutAnimation(@NonNull MorphingParams params) {
         if (params.getCornerRadius() != null) {
             mDrawableNormal.setCornerRadius(params.getCornerRadius());
@@ -119,7 +125,6 @@ public class MorphingButton extends AppCompatButton {
         mDrawableNormal.setColor(params.getSolidColor());
         mDrawableNormal.setStrokeColor(params.getStrokeColor());
         mDrawableNormal.setStrokeWidth(params.getStrokeWidth());
-
 
         final int fromBackgroundWidth = mDrawableNormal.getGradientDrawable().getBounds().width();
         final int toBackgroundWidth = params.getBackgroundWidth();
@@ -155,7 +160,7 @@ public class MorphingButton extends AppCompatButton {
             backgroundSizeAnimator.start();
         }
 
-        if(params.getWidth() != 0 && params.getHeight() !=0) {
+        if (params.getWidth() != 0 && params.getHeight() != 0) {
             ViewGroup.LayoutParams layoutParams = getLayoutParams();
             layoutParams.width = params.getWidth();
             layoutParams.height = params.getHeight();
@@ -184,12 +189,9 @@ public class MorphingButton extends AppCompatButton {
             setText(params.getText());
         } else if (params.getIcon() != 0) {
             setIcon(params.getIcon());
-        } else if(params.getText() != null) {
+        } else if (params.getText() != null && !TextUtils.equals(params.getText(), getText())) {
             setText(params.getText());
         }
-
-        mDrawableNormal.setColor(params.getSolidColor());
-        mDrawableNormal.setStrokeColor(params.getStrokeColor());
 
         if (params.getAnimationListener() != null) {
             params.getAnimationListener().onAnimationEnd();
@@ -245,7 +247,7 @@ public class MorphingButton extends AppCompatButton {
         setBackgroundCompat(mDrawableNormal.getGradientDrawable());
     }
 
-    private StrokeGradientDrawable createDrawable(ColorStateList color, ColorStateList strokeColor, int cornerRadius, int strokeWidth) {
+    protected StrokeGradientDrawable createDrawable(ColorStateList color, ColorStateList strokeColor, int cornerRadius, int strokeWidth) {
         StrokeGradientDrawable drawable = new StrokeGradientDrawable(new GradientDrawable());
         drawable.getGradientDrawable().setShape(GradientDrawable.RECTANGLE);
         drawable.setColor(color);

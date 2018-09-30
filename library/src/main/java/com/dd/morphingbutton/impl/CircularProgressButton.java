@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
 import android.text.method.TransformationMethod;
@@ -15,6 +16,7 @@ import com.dd.morphingbutton.IProgress;
 import com.dd.morphingbutton.MorphingButton;
 import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
+import com.dd.morphingbutton.StrokeGradientDrawable;
 import com.dd.morphingbutton.impl.progresstextstate.CompleteState;
 import com.dd.morphingbutton.impl.progresstextstate.ErrorState;
 import com.dd.morphingbutton.impl.progresstextstate.IdleState;
@@ -84,6 +86,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         init(attrs);
     }
 
+    @DebugLog
     private void init(AttributeSet attrs) {
         TypedArray typedArray = getTypedArray(attrs);
         for (StateEnum stateEnum : StateEnum.values()) {
@@ -120,6 +123,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     }
 
     private void realSetState(StateEnum stateEnum, boolean withAnim) {
+        Log.e("LAZY", "realSetState as " + stateEnum + ", this = " + this.toString());
         if (mCurrentStateImpl != null) {
             mCurrentStateImpl.stop();
         }
@@ -129,6 +133,17 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         morph(withAnim ? params.duration(ANIMATION_DURATION) : params.duration(0));
         mCurrentStateImpl.start();
         mCurrentStateEnum = stateEnum;
+    }
+
+    @Override
+    protected StrokeGradientDrawable createDrawable(ColorStateList color, ColorStateList strokeColor, int cornerRadius, int strokeWidth) {
+        GradientDrawable gradientDrawable = (GradientDrawable) getResources().getDrawable(
+                R.drawable.mc_cir_pro_btn_background).mutate();
+        StrokeGradientDrawable drawable = new StrokeGradientDrawable(gradientDrawable);
+        drawable.setColor(color);
+        drawable.setCornerRadius(cornerRadius);
+
+        return drawable;
     }
 
     private AbsProgressTextState getState(StateEnum state) {

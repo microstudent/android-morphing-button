@@ -12,7 +12,7 @@
 
     <!--下载按钮公共长宽-->
     <dimen name="v7_btn_install_height">24dip</dimen>
-    <dimen name="v7_btn_install_width">58dip</dimen>
+    <dimen name="v7_btn_install_width">48dip</dimen>
     <dimen name="v7_btn_install_corner_radius">48dp</dimen>
 
     <color name="mc_cir_progress_button_blank">#0C000000</color>
