@@ -5,6 +5,10 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
+import android.text.TextUtils;
 
 import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
@@ -13,15 +17,24 @@ import com.dd.morphingbutton.impl.CircularProgressButton;
 public class IdleState extends AbsProgressTextState {
 
     private final CircularProgressButton mButton;
+    private TextPaint mTextPaint;
     private int mStrokeWidth;
     private String mIdleText;
     private float mCornerRadius;
     private ColorStateList mIdleColorState;
     private ColorStateList mStrokeColorIdle;
     private ColorStateList mTextColor;
+    private StaticLayout mTextLayout;
 
     public IdleState(CircularProgressButton button) {
         mButton = button;
+        initTextPaint();
+    }
+
+    private void initTextPaint() {
+        mTextPaint = mButton.getPaint();
+        mTextColor = ColorStateList.valueOf(Color.WHITE);
+
     }
 
     @Override
@@ -64,17 +77,25 @@ public class IdleState extends AbsProgressTextState {
     public MorphingParams getParams() {
         return MorphingParams
                 .create()
-                .textColor(Color.WHITE)
                 .solidColor(mIdleColorState)
                 .strokeWidth(mStrokeWidth)
+                .strokeColor(mStrokeColorIdle)
                 .backgroundWidth(mButton.getWidth())
-                .cornerRadius((int) mCornerRadius)
-                .text(mIdleText);
+                .cornerRadius((int) mCornerRadius);
     }
 
     @Override
     public void onDraw(@NonNull Canvas canvas) {
-
+        if (mTextLayout == null && !TextUtils.isEmpty(mIdleText)) {
+            mTextLayout = new StaticLayout(mIdleText, mTextPaint, mButton.getWidth(), Layout.Alignment.ALIGN_CENTER, 1, 0, true);
+        }
+        if (mTextLayout != null) {
+            int pading = (mButton.getHeight() - mTextLayout.getHeight()) / 2;
+            canvas.translate(0, pading);
+            mTextPaint.setColor(mTextColor.getDefaultColor());
+            mTextLayout.draw(canvas);
+            canvas.translate(0, -pading);
+        }
     }
 
     public void setColorState(ColorStateList idleColorState) {
@@ -91,5 +112,6 @@ public class IdleState extends AbsProgressTextState {
 
     public void setText(String text) {
         mIdleText = text;
+        mTextLayout = null;
     }
 }
