@@ -264,26 +264,6 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         return (int) paint.measureText(str);
     }
 
-//    /**
-//     * 设置背景颜色
-//     *
-//     * @param color
-//     */
-//    @Override
-//    public void setBackgroundColor(int color) {
-//        mBackground.getGradientDrawable().setColor(color);
-//    }
-
-    /**
-     * 设置描边颜色
-     *
-     * @param color
-     */
-    public void setStrokeColor(int color) {
-        //TODO fixme
-//        mBackground.setStrokeColor(color);
-    }
-
     /**
      * 设置进度值，只在进度状态下有效
      *
@@ -325,7 +305,6 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
             default:
                 break;
         }
-        //fixme  刷新
         drawableStateChanged();
     }
 
@@ -352,7 +331,6 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
             default:
                 break;
         }
-        //fixme 刷新
     }
 
 
@@ -381,9 +359,6 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
                 break;
             default:
                 break;
-        }
-        if (mCurrentStateEnum == state && !isAnimationInProgress()) {
-            //fixme 刷新
         }
     }
 

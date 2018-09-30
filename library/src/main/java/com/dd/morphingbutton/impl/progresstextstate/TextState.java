@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.TypedValue;
 
 import com.dd.morphingbutton.MorphingParams;
 import com.dd.morphingbutton.R;
@@ -15,8 +16,8 @@ public class TextState extends AbsProgressTextState {
 
     private final CircularProgressButton mButton;
     private String mText;
-    // TODO: 18-9-28
     private float mTextSize;
+    private float mOriginTextSize;
 
     public TextState(CircularProgressButton button) {
         mButton = button;
@@ -24,12 +25,15 @@ public class TextState extends AbsProgressTextState {
 
     @Override
     public void start() {
-
+        mOriginTextSize = mButton.getTextSize();
+        if (mTextSize > 0) {
+            mButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, mTextSize);
+        }
     }
 
     @Override
     public void stop() {
-
+        mButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, mOriginTextSize);
     }
 
     @NonNull
@@ -37,8 +41,6 @@ public class TextState extends AbsProgressTextState {
     public MorphingParams getParams() {
         return MorphingParams
                 .create()
-                .width(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_width))
-                .height(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_height))
                 .solidColor(Color.TRANSPARENT)
                 .strokeWidth(0)
                 .textColor(Color.GRAY)
@@ -47,7 +49,6 @@ public class TextState extends AbsProgressTextState {
 
     @Override
     public void initAttrs(TypedArray typedArray) {
-        mTextSize = DensityUtil.px2sp(mButton.getContext(), mButton.getTextSize());
     }
 
     public void setText(String text) {

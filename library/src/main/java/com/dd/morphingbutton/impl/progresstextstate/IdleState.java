@@ -67,8 +67,6 @@ public class IdleState extends AbsProgressTextState {
                 .textColor(Color.WHITE)
                 .solidColor(mIdleColorState)
                 .strokeWidth(mStrokeWidth)
-                .width(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_width))
-                .height(mButton.getResources().getDimensionPixelSize(R.dimen.v7_btn_install_height))
                 .backgroundWidth(mButton.getWidth())
                 .cornerRadius((int) mCornerRadius)
                 .text(mIdleText);
