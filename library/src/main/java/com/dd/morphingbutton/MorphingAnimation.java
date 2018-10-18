@@ -3,6 +3,7 @@ package com.dd.morphingbutton;
 import android.animation.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -209,9 +210,11 @@ public class MorphingAnimation {
                         padding = 0;
                     }
 
-                    background.getGradientDrawable()
-                            .setBounds(leftOffset + padding, padding, rightOffset - padding - 1,
+                    background.setBounds(leftOffset + padding, padding, rightOffset - padding - 1,
                                     mParams.button.getHeight() - padding - 1);
+//                    Log.e("CRAZY", "anim, rect = " + background.getGradientDrawable().getBounds() + "this = " + mParams.button.toString());
+//                    mParams.button.needLog = true;
+                    background.getGradientDrawable().invalidateSelf();
                 }
             });
             animators.add(backgroundSizeAnimator);

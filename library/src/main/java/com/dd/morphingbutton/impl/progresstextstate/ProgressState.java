@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.dd.morphingbutton.MorphingParams;
@@ -195,6 +196,7 @@ public class ProgressState extends AbsProgressTextState {
         int bottom = mButton.getHeight() - mPaddingProgress;
         int top = mPaddingProgress;
 
+//        Log.e("LAZY", "width = " + (right - left));
         return MorphingParams.create()
                 .backgroundWidth(right - left)
                 .solidColor(mColorProgress)

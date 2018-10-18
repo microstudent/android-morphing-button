@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
@@ -123,7 +125,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     }
 
     private void realSetState(StateEnum stateEnum, boolean withAnim) {
-        Log.e("LAZY", "realSetState as " + stateEnum + ", this = " + this.toString());
+//        Log.e("LAZY", "realSetState as " + stateEnum + "anim = " + withAnim + ", this = " + this.toString());
         if (mCurrentStateImpl != null) {
             mCurrentStateImpl.stop();
         }
@@ -229,6 +231,15 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
         if (mCurrentStateImpl != null) {
             mCurrentStateImpl.onDraw(canvas);
         }
+//        if (needLog) {
+////            Log.e("CRAZY", "onDraw, rect = " + getBackground().getBounds() + ", this = " + toString());
+//            needLog = false;
+//        }
+    }
+
+    @Override
+    protected boolean verifyDrawable(@NonNull Drawable who) {
+        return super.verifyDrawable(who) || who == getDrawableNormal().getGradientDrawable();
     }
 
     /**
@@ -271,6 +282,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
      */
     public void setProgressForState(int progress, boolean useAnim) {
         if (mCurrentStateEnum == StateEnum.PROGRESS) {
+//            Log.e("LAZY", "setProgressForState" + "anim = " + useAnim + ", this = " + this.toString());
             getProgressStateImpl().setProgress(progress, useAnim);
         }
     }
@@ -305,7 +317,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
             default:
                 break;
         }
-        drawableStateChanged();
+        refreshDrawableState();
     }
 
     /**

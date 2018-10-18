@@ -5,7 +5,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -16,6 +18,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.text.StaticLayout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,6 +44,8 @@ public class MorphingButton extends AppCompatButton {
 
     private StrokeGradientDrawable mDrawableNormal;
     private MorphingAnimation mMorphingAnimation;
+
+//    public boolean needLog;
 
     public MorphingButton(Context context) {
         super(context);
@@ -72,6 +77,14 @@ public class MorphingButton extends AppCompatButton {
 
     @DebugLog
     public void morph(@NonNull MorphingParams params) {
+        if (mDrawableNormal == null) {
+            mDrawableNormal = createDrawable(mSolidColor, mStrokeColor, 0, 0);
+            mDrawableNormal.getGradientDrawable().setState(getDrawableState());
+            setBackgroundCompat(null);
+            //onDraw手动绘制，因为setBackGround会使得此时setBound方法无效，在onDraw还是变成了view的大小,ref:http://www.voidcn.com/article/p-qzuadyjo-bbq.html
+            mDrawableNormal.getGradientDrawable().setCallback(this);
+        }
+
         if (!mAnimationInProgress) {
 
             if (params.getDuration() == 0) {
@@ -90,11 +103,39 @@ public class MorphingButton extends AppCompatButton {
         }
     }
 
+    @Override
+    protected boolean verifyDrawable(@NonNull Drawable who) {
+        return super.verifyDrawable(who) || (mDrawableNormal != null && who == mDrawableNormal.getGradientDrawable());
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        if (mDrawableNormal != null) {
+            ensureDrawableBounds(mDrawableNormal);
+            mDrawableNormal.getGradientDrawable().draw(canvas);
+        }
+        super.draw(canvas);
+    }
+
+    private void ensureDrawableBounds(StrokeGradientDrawable strokeGradientDrawable) {
+        if (strokeGradientDrawable != null) {
+            if (strokeGradientDrawable.isBoundsDefault()) {
+                strokeGradientDrawable.setBounds(0, 0, getRight() - getLeft(), getBottom() - getTop());
+            }
+        }
+    }
+
     private void morphWithAnimation(@NonNull final MorphingParams params) {
+        cancelAllAnimation();
         mAnimationInProgress = true;
         setText(null);
         setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         setPadding(mPadding.left, mPadding.top, mPadding.right, mPadding.bottom);
+
+        int fromBackgroundWidth = mDrawableNormal.getGradientDrawable().getBounds().width();
+        if (fromBackgroundWidth == 0) {
+            fromBackgroundWidth = getWidth();
+        }
 
         MorphingAnimation.Params animationParams = MorphingAnimation.Params.create(this)
                 .textColor(mTextColor == null ? Color.TRANSPARENT : mTextColor.getDefaultColor(), params.getTextColor().getDefaultColor())
@@ -104,16 +145,18 @@ public class MorphingButton extends AppCompatButton {
                 .strokeColor(mStrokeColor == null ? Color.TRANSPARENT : mStrokeColor.getDefaultColor(), params.getStrokeColor().getDefaultColor())
                 .height(mHeight, params.getHeight())
                 .width(mWidth, params.getWidth())
-                .backgroundWidth(getBackground().getBounds().width(), params.getBackgroundWidth())
+                .backgroundWidth(fromBackgroundWidth, params.getBackgroundWidth())
                 .duration(params.getDuration())
                 .listener(new MorphingAnimation.Listener() {
                     @Override
                     public void onAnimationEnd() {
                         finalizeMorphing(params);
+                        unblockTouch();
                     }
                 });
 
         mMorphingAnimation = new MorphingAnimation(animationParams);
+        blockTouch();
         mMorphingAnimation.start();
     }
 
@@ -126,38 +169,34 @@ public class MorphingButton extends AppCompatButton {
         mDrawableNormal.setStrokeColor(params.getStrokeColor());
         mDrawableNormal.setStrokeWidth(params.getStrokeWidth());
 
-        final int fromBackgroundWidth = mDrawableNormal.getGradientDrawable().getBounds().width();
+        int fromBackgroundWidth = mDrawableNormal.getBounds().width();
+        if (fromBackgroundWidth == 0) {
+            fromBackgroundWidth = getWidth();
+        }
         final int toBackgroundWidth = params.getBackgroundWidth();
 
         if (fromBackgroundWidth != toBackgroundWidth && toBackgroundWidth > 0) {
-            PropertyValuesHolder widthHolder = PropertyValuesHolder.ofInt("width", fromBackgroundWidth, toBackgroundWidth);
+            int width = toBackgroundWidth;
 
-            ValueAnimator backgroundSizeAnimator = ValueAnimator.ofPropertyValuesHolder(widthHolder);
-            backgroundSizeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    int width = (Integer) animation.getAnimatedValue("width");
+            int leftOffset;
+            int rightOffset;
+            int padding;
 
-                    int leftOffset;
-                    int rightOffset;
-                    int padding;
+            if (fromBackgroundWidth > toBackgroundWidth) {
+                leftOffset = (fromBackgroundWidth - width) / 2;
+                rightOffset = fromBackgroundWidth - leftOffset;
+                padding = 0;
+            } else {
+                leftOffset = (toBackgroundWidth - width) / 2;
+                rightOffset = toBackgroundWidth - leftOffset;
+                padding = 0;
+            }
 
-                    if (fromBackgroundWidth > toBackgroundWidth) {
-                        leftOffset = (fromBackgroundWidth - width) / 2;
-                        rightOffset = fromBackgroundWidth - leftOffset;
-                        padding = 0;
-                    } else {
-                        leftOffset = (toBackgroundWidth - width) / 2;
-                        rightOffset = toBackgroundWidth - leftOffset;
-                        padding = 0;
-                    }
-
-                    mDrawableNormal.getGradientDrawable()
-                            .setBounds(leftOffset + padding, padding, rightOffset - padding - 1,
-                                    getHeight() - padding - 1);
-                }
-            });
-            backgroundSizeAnimator.start();
+            mDrawableNormal.setBounds(leftOffset + padding, padding, rightOffset - padding - 1,
+                            getHeight() - padding - 1);
+            mDrawableNormal.getGradientDrawable().invalidateSelf();
+//            Log.e("CRAZY", "no anim ,rect = " + mDrawableNormal.getGradientDrawable().getBounds() + ", this = " + MorphingButton.this.toString());
+//            needLog = true;
         }
 
         if (params.getWidth() != 0 && params.getHeight() != 0) {
@@ -171,6 +210,40 @@ public class MorphingButton extends AppCompatButton {
         }
 
         finalizeMorphing(params);
+    }
+
+    @Override
+    protected void drawableStateChanged() {
+        super.drawableStateChanged();
+        if (mDrawableNormal != null) {
+            //由于压下放手时动画已经开始假如这个时候更新各状态的Drawable，很可能把动画过程中的原先设置的属性给覆盖掉，因此在这里判断假如正在动画则保存状态。
+            Rect r = recordBackgroundBoundIfNeed();
+            mDrawableNormal.getGradientDrawable().setState(getDrawableState());
+            restoreBackgroundBoundIfNeed(r);
+        }
+    }
+
+    private Rect recordBackgroundBoundIfNeed() {
+        if (!isAnimationInProgress()) {
+            return null;
+        }
+        Rect r = new Rect();
+        if (mDrawableNormal != null) {
+            r.set(mDrawableNormal.getGradientDrawable().getBounds());
+        }
+        return r;
+    }
+
+    private void restoreBackgroundBoundIfNeed(Rect r) {
+        if (isAnimationInProgress() && r != null && mDrawableNormal != null) {
+            mDrawableNormal.getGradientDrawable().setBounds(r);
+        }
+    }
+
+    private void setBackgroundState(Drawable d, int[] state) {
+        if (d == null) {
+            return;
+        }
     }
 
     public boolean isAnimationInProgress() {
@@ -224,7 +297,7 @@ public class MorphingButton extends AppCompatButton {
         mPadding.bottom = getPaddingBottom();
 
         Resources resources = getResources();
-        int cornerRadius = (int) resources.getDimension(R.dimen.mb_corner_radius_2);
+        int cornerRadius = (int) resources.getDimension(R.dimen.v7_btn_install_corner_radius);
         int blue = resources.getColor(R.color.mb_blue);
         int blueDark = resources.getColor(R.color.mb_blue_dark);
         int unableColor = resources.getColor(R.color.btn_unable);
@@ -237,14 +310,11 @@ public class MorphingButton extends AppCompatButton {
         states[4] = new int[]{};
         ColorStateList colorStateList = new ColorStateList(states, colors);
 
-        mDrawableNormal = createDrawable(colorStateList, colorStateList, cornerRadius, 0);
 
         mSolidColor = colorStateList;
         mStrokeColor = colorStateList;
         mCornerRadius = (float) cornerRadius;
         mTextColor = getTextColors();
-
-        setBackgroundCompat(mDrawableNormal.getGradientDrawable());
     }
 
     protected StrokeGradientDrawable createDrawable(ColorStateList color, ColorStateList strokeColor, int cornerRadius, int strokeWidth) {

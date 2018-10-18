@@ -1,5 +1,6 @@
 package com.dd.morphingbutton.impl.progresstextstate;
 
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ public class TextState extends AbsProgressTextState {
 
     private TextPaint mTextPaint;
     private StaticLayout mStaticLayout;
+    private ColorStateList mTextColor;
 
     public TextState(CircularProgressButton button) {
         mButton = button;
@@ -30,6 +32,7 @@ public class TextState extends AbsProgressTextState {
 
     private void initTextPaint() {
         mTextPaint = mButton.getPaint();
+        mTextColor = ColorStateList.valueOf(Color.GRAY);
     }
 
     @Override
@@ -73,8 +76,11 @@ public class TextState extends AbsProgressTextState {
             mStaticLayout = new StaticLayout(mText, mTextPaint, mButton.getWidth(), Layout.Alignment.ALIGN_CENTER, 1, 0, true);
         }
         if (mStaticLayout != null) {
-            mTextPaint.setColor(Color.GRAY);
+            int pading = (mButton.getHeight() - mStaticLayout.getHeight()) / 2;
+            canvas.translate(0, pading);
+            mTextPaint.setColor(mTextColor.getDefaultColor());
             mStaticLayout.draw(canvas);
+            canvas.translate(0, -pading);
         }
     }
 
@@ -85,6 +91,11 @@ public class TextState extends AbsProgressTextState {
         mTextSize = textSizeInSp;
         makeDirty(true);
     }
+
+    public void setTextColor(ColorStateList colorStateList) {
+        mTextColor = colorStateList;
+    }
+
 
     @Override
     public String toString() {
