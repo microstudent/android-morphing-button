@@ -91,6 +91,9 @@ public class ProgressState extends AbsProgressTextState {
 
     public void setProgress(int progress, boolean useAnim) {
         mProgress = progress;
+        if (!useAnim) {
+            mAnimCurrentProgress = mProgress;
+        }
         isUseTransitionAnim = useAnim;
         if (mButton.isAnimationInProgress() || mButton.getWidth() == 0) {
             return;
@@ -112,7 +115,6 @@ public class ProgressState extends AbsProgressTextState {
                 if (useAnim) {
                     startProgressAnimation();
                 } else {
-                    mAnimCurrentProgress = mProgress;
                     mButton.invalidate();
                 }
             }
@@ -150,14 +152,6 @@ public class ProgressState extends AbsProgressTextState {
     @Override
     public void start() {
         mDefaultDrawable = mButton.getBackground();
-        if (mIndeterminateProgressMode) {
-            initAnimatedDrawable();
-            mAnimatedDrawable.setCallback(mButton);
-            mAnimatedDrawable.start();
-            mAnimatedDrawable.setAllowLoading(true);
-        } else {
-            initProgressDrawable();
-        }
     }
 
     private void initProgressDrawable() {
@@ -173,6 +167,9 @@ public class ProgressState extends AbsProgressTextState {
     private void initAnimatedDrawable() {
         if (mAnimatedDrawable == null) {
             mAnimatedDrawable = new CircularAnimatedDrawable(mColorIndicator, mProgressStrokeWidth);
+            mAnimatedDrawable.setCallback(mButton);
+            mAnimatedDrawable.start();
+            mAnimatedDrawable.setAllowLoading(true);
         }
     }
 
@@ -193,8 +190,8 @@ public class ProgressState extends AbsProgressTextState {
         int offset = (mButton.getWidth() - mButton.getHeight()) / 2;
         int left = offset + mPaddingProgress;
         int right = mButton.getWidth() - offset - mPaddingProgress;
-        int bottom = mButton.getHeight() - mPaddingProgress;
-        int top = mPaddingProgress;
+//        int bottom = mButton.getHeight() - mPaddingProgress;
+//        int top = mPaddingProgress;
 
 //        Log.e("LAZY", "width = " + (right - left));
         return MorphingParams.create()

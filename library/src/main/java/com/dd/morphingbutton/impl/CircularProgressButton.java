@@ -4,15 +4,17 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArrayMap;
+import android.support.v4.view.ViewCompat;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
 import com.dd.morphingbutton.IProgress;
 import com.dd.morphingbutton.MorphingButton;
@@ -35,7 +37,7 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
     private static final int ANIMATION_DURATION = 300;
     private StateEnum mCurrentStateEnum;
 
-    private Runnable mRealSetStateRunnable;
+    private OnLayoutChangeListener mOnLayoutChangeListener;
 
     public enum StateEnum {
         /***/
@@ -107,18 +109,19 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
             }
             return;
         }
-        if (!isLaidOut()) {
+        if (getWidth() <= 0 && getHeight() <= 0) {
             //等待layout完成再进行setState
-            if (mRealSetStateRunnable != null) {
-                removeCallbacks(mRealSetStateRunnable);
+            if (mOnLayoutChangeListener != null) {
+                removeOnLayoutChangeListener(mOnLayoutChangeListener);
             }
-            mRealSetStateRunnable = new Runnable() {
+            mOnLayoutChangeListener = new OnLayoutChangeListener() {
                 @Override
-                public void run() {
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    removeOnLayoutChangeListener(this);
                     realSetState(stateEnum, withAnim);
                 }
             };
-            post(mRealSetStateRunnable);
+            addOnLayoutChangeListener(mOnLayoutChangeListener);
         } else {
             realSetState(stateEnum, withAnim);
         }
@@ -280,11 +283,12 @@ public class CircularProgressButton extends MorphingButton implements IProgress 
      *
      * @param progress 进度值
      */
-    public void setProgressForState(int progress, boolean useAnim) {
+    public boolean setProgressForState(int progress, boolean useAnim) {
         if (mCurrentStateEnum == StateEnum.PROGRESS) {
-//            Log.e("LAZY", "setProgressForState" + "anim = " + useAnim + ", this = " + this.toString());
             getProgressStateImpl().setProgress(progress, useAnim);
+            return true;
         }
+        return false;
     }
 
 

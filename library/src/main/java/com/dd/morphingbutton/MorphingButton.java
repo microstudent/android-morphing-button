@@ -153,6 +153,11 @@ public class MorphingButton extends AppCompatButton {
                         finalizeMorphing(params);
                         unblockTouch();
                     }
+
+                    @Override
+                    public void onAnimationCancel() {
+                        unblockTouch();
+                    }
                 });
 
         mMorphingAnimation = new MorphingAnimation(animationParams);

@@ -111,6 +111,11 @@ public class IndeterminateProgressButton extends MorphingButton {
                         mIsRunning = true;
                         invalidate();
                     }
+
+                    @Override
+                    public void onAnimationCancel() {
+
+                    }
                 });
         morph(longRoundedSquare);
     }

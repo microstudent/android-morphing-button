@@ -15,6 +15,8 @@ public class MorphingAnimation {
 
     public interface Listener {
         void onAnimationEnd();
+
+        void onAnimationCancel();
     }
 
     public static class Params {
@@ -229,6 +231,13 @@ public class MorphingAnimation {
             public void onAnimationEnd(Animator animation) {
                 if (mParams.animationListener != null) {
                     mParams.animationListener.onAnimationEnd();
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                if (mParams.animationListener != null) {
+                    mParams.animationListener.onAnimationCancel();
                 }
             }
         });
